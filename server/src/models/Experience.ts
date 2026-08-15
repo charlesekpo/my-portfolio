@@ -1,81 +1,87 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, {
+  Document,
+  Schema
+} from "mongoose";
 
-export interface IExperience extends Document {
+export interface IExperience
+  extends Document {
   company: string;
   position: string;
-  location?: string;
-
-  description: string;
-
-  technologies: string[];
-
+  location: string;
   startDate: Date;
   endDate?: Date;
-
   current: boolean;
-
+  description: string;
+  technologies: string[];
   sortOrder: number;
-
+  published: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const experienceSchema = new Schema<IExperience>(
-  {
-    company: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 150
-    },
+const experienceSchema =
+  new Schema<IExperience>(
+    {
+      company: {
+        type: String,
+        required: true,
+        trim: true
+      },
 
-    position: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 150
-    },
+      position: {
+        type: String,
+        required: true,
+        trim: true
+      },
 
-    location: {
-      type: String,
-      default: ""
-    },
+      location: {
+        type: String,
+        default: "",
+        trim: true
+      },
 
-    description: {
-      type: String,
-      required: true
-    },
+      startDate: {
+        type: Date,
+        required: true
+      },
 
-    technologies: {
-      type: [String],
-      default: []
-    },
+      endDate: {
+        type: Date
+      },
 
-    startDate: {
-      type: Date,
-      required: true
-    },
+      current: {
+        type: Boolean,
+        default: false
+      },
 
-    endDate: {
-      type: Date
-    },
+      description: {
+        type: String,
+        required: true,
+        trim: true
+      },
 
-    current: {
-      type: Boolean,
-      default: false
-    },
+      technologies: {
+        type: [String],
+        default: []
+      },
 
-    sortOrder: {
-      type: Number,
-      default: 0
+      sortOrder: {
+        type: Number,
+        default: 0
+      },
+
+      published: {
+        type: Boolean,
+        default: true
+      }
+    },
+    {
+      timestamps: true
     }
-  },
-  {
-    timestamps: true
-  }
-);
+  );
 
-export const Experience = mongoose.model<IExperience>(
-  "Experience",
-  experienceSchema
-);
+export const Experience =
+  mongoose.model<IExperience>(
+    "Experience",
+    experienceSchema
+  );

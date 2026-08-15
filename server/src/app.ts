@@ -7,6 +7,7 @@ import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import skillRoutes from "./routes/skill.routes.js";
+import experienceRoutes from "./routes/experience.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -82,6 +83,11 @@ app.use(
 app.use(
   "/api/skills",
   skillRoutes
+);
+
+app.use(
+  "/api/experience",
+  experienceRoutes
 );
 
 /*
