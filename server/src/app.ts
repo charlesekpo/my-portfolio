@@ -5,6 +5,7 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import projectRoutes from "./routes/project.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -71,6 +72,11 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+
+app.use(
+  "/api/projects",
+  projectRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
