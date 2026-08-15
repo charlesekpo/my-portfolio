@@ -3,7 +3,8 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import pinoHttp from "pino-http";
+import { errorMiddleware } from "./middleware/error.middleware.js";
+import authRoutes from "./routes/auth.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -52,7 +53,6 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-app.use(pinoHttp());
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +70,8 @@ app.use(
   })
 );
 
+app.use("/api/auth", authRoutes);
+
 /*
 |--------------------------------------------------------------------------
 | Health check
@@ -82,5 +84,7 @@ app.get("/api/health", (_req, res) => {
     message: "Portfolio API is running"
   });
 });
+
+app.use(errorMiddleware);
 
 export default app;
