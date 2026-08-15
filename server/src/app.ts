@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import projectRoutes from "./routes/project.routes.js";
+import skillRoutes from "./routes/skill.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -76,6 +77,11 @@ app.use("/api/auth", authRoutes);
 app.use(
   "/api/projects",
   projectRoutes
+);
+
+app.use(
+  "/api/skills",
+  skillRoutes
 );
 
 /*
