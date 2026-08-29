@@ -10,6 +10,7 @@ import skillRoutes from "./routes/skill.routes.js";
 import experienceRoutes from "./routes/experience.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import siteSettingsRoutes from "./routes/siteSettings.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -100,6 +101,11 @@ app.use(
 app.use(
   "/api/settings",
   siteSettingsRoutes
+);
+
+app.use(
+  "/api/messages",
+  messageRoutes
 );
 
 /*
