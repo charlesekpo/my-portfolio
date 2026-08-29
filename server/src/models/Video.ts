@@ -1,86 +1,93 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, {
+  Document,
+  Schema
+} from "mongoose";
 
 export type VideoPlatform =
   | "youtube"
   | "vimeo"
-  | "self-hosted"
-  | "other";
+  | "direct";
 
-export interface IVideo extends Document {
+export interface IVideo
+  extends Document {
   title: string;
-  description?: string;
-
-  url: string;
-  thumbnail?: string;
-
+  description: string;
+  thumbnail: string;
+  videoUrl: string;
   platform: VideoPlatform;
-
   featured: boolean;
   published: boolean;
-
   sortOrder: number;
-
   createdAt: Date;
   updatedAt: Date;
 }
 
-const videoSchema = new Schema<IVideo>(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 150
-    },
+const videoSchema =
+  new Schema<IVideo>(
+    {
+      title: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 150
+      },
 
-    description: {
-      type: String,
-      default: ""
-    },
+      description: {
+        type: String,
+        default: "",
+        trim: true
+      },
 
-    url: {
-      type: String,
-      required: true,
-      trim: true
-    },
+      thumbnail: {
+        type: String,
+        default: "",
+        trim: true
+      },
 
-    thumbnail: {
-      type: String,
-      default: ""
-    },
+      videoUrl: {
+        type: String,
+        required: true,
+        trim: true
+      },
 
-    platform: {
-      type: String,
-      enum: [
-        "youtube",
-        "vimeo",
-        "self-hosted",
-        "other"
-      ],
-      default: "youtube"
-    },
+      platform: {
+        type: String,
+        enum: [
+          "youtube",
+          "vimeo",
+          "direct"
+        ],
+        required: true
+      },
 
-    featured: {
-      type: Boolean,
-      default: false
-    },
+      featured: {
+        type: Boolean,
+        default: false
+      },
 
-    published: {
-      type: Boolean,
-      default: true
-    },
+      published: {
+        type: Boolean,
+        default: true
+      },
 
-    sortOrder: {
-      type: Number,
-      default: 0
+      sortOrder: {
+        type: Number,
+        default: 0
+      }
+    },
+    {
+      timestamps: true
     }
-  },
-  {
-    timestamps: true
-  }
-);
+  );
 
-export const Video = mongoose.model<IVideo>(
-  "Video",
-  videoSchema
-);
+videoSchema.index({
+  published: 1,
+  featured: 1,
+  sortOrder: 1
+});
+
+export const Video =
+  mongoose.model<IVideo>(
+    "Video",
+    videoSchema
+  );
