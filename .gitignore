@@ -7,6 +7,8 @@ dist/
 
 coverage/
 
+server/uploads/
+
 .DS_Store
 
 *.log
