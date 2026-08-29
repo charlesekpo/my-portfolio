@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-  "dev": "tsx watch src/server.ts",
-  "build": "tsc",
-  "start": "node dist/server.js",
-  "seed:admin": "tsx src/scripts/seedAdmin.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "seed:admin": "tsx src/scripts/seedAdmin.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -19,6 +19,7 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.9.0",
+    "multer": "^2.3.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.2.0",
     "@types/node": "^24.0.0",
     "tsx": "^4.20.3",
     "typescript": "^6.0.3"

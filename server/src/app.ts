@@ -11,10 +11,19 @@ import experienceRoutes from "./routes/experience.routes.js";
 import videoRoutes from "./routes/video.routes.js";
 import siteSettingsRoutes from "./routes/siteSettings.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import mediaRoutes from "./routes/media.routes.js";
+import path from "node:path";
 
 import { env } from "./config/env.js";
 
 const app = express();
+
+app.use(
+  "/uploads",
+  express.static(
+    path.resolve("uploads")
+  )
+);
 
 app.set("trust proxy", 1);
 
@@ -106,6 +115,11 @@ app.use(
 app.use(
   "/api/messages",
   messageRoutes
+);
+
+app.use(
+  "/api/media",
+  mediaRoutes
 );
 
 /*
