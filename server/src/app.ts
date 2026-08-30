@@ -13,6 +13,7 @@ import siteSettingsRoutes from "./routes/siteSettings.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
 import path from "node:path";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -120,6 +121,11 @@ app.use(
 app.use(
   "/api/media",
   mediaRoutes
+);
+
+app.use(
+  "/api/dashboard",
+  dashboardRoutes
 );
 
 /*

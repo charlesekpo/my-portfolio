@@ -1,6 +1,35 @@
+import {
+  useQuery
+} from "@tanstack/react-query";
+
 import StatCard from "../../components/admin/StatCard";
 
+import {
+  getDashboardStats
+} from "../../api/dashboard.api";
+
 export default function Dashboard() {
+  const {
+    data,
+    isLoading,
+    isError
+  } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: getDashboardStats
+  });
+
+  if (isLoading) {
+    return <p>Loading dashboard...</p>;
+  }
+
+  if (isError || !data) {
+    return (
+      <p>
+        Failed to load dashboard statistics.
+      </p>
+    );
+  }
+
   return (
     <section>
       <div className="dashboard-intro">
@@ -17,32 +46,32 @@ export default function Dashboard() {
       <div className="stats-grid">
         <StatCard
           label="Projects"
-          value={0}
+          value={data.projects}
         />
 
         <StatCard
           label="Skills"
-          value={0}
+          value={data.skills}
         />
 
         <StatCard
           label="Experience"
-          value={0}
+          value={data.experience}
         />
 
         <StatCard
           label="Videos"
-          value={0}
+          value={data.videos}
         />
 
         <StatCard
           label="Messages"
-          value={0}
+          value={data.messages}
         />
 
         <StatCard
           label="Media"
-          value={0}
+          value={data.media}
         />
       </div>
     </section>
