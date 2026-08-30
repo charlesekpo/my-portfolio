@@ -16,7 +16,7 @@ export async function uploadMedia(
 
   const response =
     await apiClient.post<UploadMediaResponse>(
-      "/media/upload",
+      "/media",
       formData,
       {
         headers: {

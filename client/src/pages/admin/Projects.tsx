@@ -11,6 +11,8 @@ import ProjectForm from "../../components/admin/ProjectForm";
 
 import { useState } from "react";
 
+import { getMediaUrl } from "../../utils/mediaUrl";
+
 export default function Projects() {
   const [showForm, setShowForm] =
     useState(false);
@@ -107,7 +109,7 @@ export default function Projects() {
             >
               {project.thumbnail && (
                 <img
-                  src={project.thumbnail}
+                  src={getMediaUrl(project.thumbnail)}
                   alt={project.title}
                   className="project-admin-image"
                 />

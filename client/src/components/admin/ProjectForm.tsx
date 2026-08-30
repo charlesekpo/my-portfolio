@@ -1,12 +1,11 @@
-import {
-  useState,
-  type FormEvent
-} from "react";
+import { useState } from "react";
 
 import {
   createProject,
   type CreateProjectData
 } from "../../api/projects.api";
+
+import { uploadMedia } from "../../api/media.api";
 
 interface ProjectFormProps {
   onSuccess: () => void;
@@ -19,20 +18,53 @@ export default function ProjectForm({
 }: ProjectFormProps) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
-  const [shortDescription, setShortDescription] = useState("");
-  const [description, setDescription] = useState("");
-  const [technologies, setTechnologies] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
-  const [images, setImages] = useState("");
-  const [liveUrl, setLiveUrl] = useState("");
-  const [githubUrl, setGithubUrl] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [featured, setFeatured] = useState(false);
-  const [published, setPublished] = useState(true);
-  const [sortOrder, setSortOrder] = useState("0");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [slugManuallyEdited, setSlugManuallyEdited] =
+    useState(false);
+
+  const [shortDescription, setShortDescription] =
+    useState("");
+
+  const [description, setDescription] =
+    useState("");
+
+  const [technologies, setTechnologies] =
+    useState("");
+
+  const [thumbnail, setThumbnail] =
+    useState("");
+
+  const [images, setImages] =
+    useState<string[]>([]);
+
+  const [liveUrl, setLiveUrl] =
+    useState("");
+
+  const [githubUrl, setGithubUrl] =
+    useState("");
+
+  const [videoUrl, setVideoUrl] =
+    useState("");
+
+  const [featured, setFeatured] =
+    useState(false);
+
+  const [published, setPublished] =
+    useState(true);
+
+  const [sortOrder, setSortOrder] =
+    useState("0");
+
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [uploadingThumbnail, setUploadingThumbnail] =
+    useState(false);
+
+  const [uploadingImages, setUploadingImages] =
+    useState(false);
 
   function generateSlug(value: string) {
     return value
@@ -51,8 +83,73 @@ export default function ProjectForm({
     }
   }
 
+  async function handleThumbnailUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      setUploadingThumbnail(true);
+      setError("");
+
+      const media = await uploadMedia(file);
+
+      setThumbnail(media.url);
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Failed to upload thumbnail."
+      );
+    } finally {
+      setUploadingThumbnail(false);
+
+      event.target.value = "";
+    }
+  }
+
+  async function handleImagesUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const files = Array.from(
+      event.target.files ?? []
+    );
+
+    if (files.length === 0) return;
+
+    try {
+      setUploadingImages(true);
+      setError("");
+
+      const uploadedUrls: string[] = [];
+
+      for (const file of files) {
+        const media = await uploadMedia(file);
+
+        uploadedUrls.push(media.url);
+      }
+
+      setImages((current) => [
+        ...current,
+        ...uploadedUrls
+      ]);
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Failed to upload one or more project images."
+      );
+    } finally {
+      setUploadingImages(false);
+
+      event.target.value = "";
+    }
+  }
+
   async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
@@ -66,28 +163,40 @@ export default function ProjectForm({
           .map((item) => item.trim())
           .filter(Boolean);
 
-      const imageList =
-        images
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean);
+      const imageList = images;
 
       const data: CreateProjectData = {
         title: title.trim(),
+
         slug: slug.trim(),
+
         shortDescription:
           shortDescription.trim(),
-        description: description.trim(),
-        technologies: technologyList,
-        thumbnail: thumbnail.trim(),
-        images: imageList,
+
+        description:
+          description.trim(),
+
+        technologies:
+          technologyList,
+
+        thumbnail:
+          thumbnail.trim(),
+
+        images:
+          imageList,
+
         featured,
+
         published,
+
         sortOrder:
           Number(sortOrder) || 0,
 
         ...(liveUrl.trim()
-          ? { liveUrl: liveUrl.trim() }
+          ? {
+              liveUrl:
+                liveUrl.trim()
+            }
           : {}),
 
         ...(githubUrl.trim()
@@ -122,17 +231,33 @@ export default function ProjectForm({
     }
   }
 
+  function removeImage(indexToRemove: number) {
+    setImages((current) =>
+      current.filter(
+        (_image, index) =>
+          index !== indexToRemove
+      )
+    );
+  }
+
   return (
     <div className="project-form-wrapper">
+
       <div className="project-form-header">
+
         <div>
-          <h2>Add Project</h2>
+
+          <h2>
+            Add Project
+          </h2>
 
           <p>
             Add a new project to your
             portfolio.
           </p>
+
         </div>
+
       </div>
 
       {error && (
@@ -145,12 +270,19 @@ export default function ProjectForm({
         onSubmit={handleSubmit}
         className="project-form"
       >
+
+        {/* ------------------------------------------------ */}
+        {/* Project Information */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-section">
+
           <h3>
             Project Information
           </h3>
 
           <div className="form-group">
+
             <label htmlFor="title">
               Title
             </label>
@@ -167,9 +299,11 @@ export default function ProjectForm({
               placeholder="My Portfolio Website"
               required
             />
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="slug">
               Slug
             </label>
@@ -180,8 +314,11 @@ export default function ProjectForm({
               value={slug}
               onChange={(event) => {
                 setSlug(
-                  generateSlug(event.target.value)
+                  generateSlug(
+                    event.target.value
+                  )
                 );
+
                 setSlugManuallyEdited(true);
               }}
               placeholder="my-portfolio-website"
@@ -191,9 +328,11 @@ export default function ProjectForm({
             <small>
               Used in the project URL.
             </small>
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="shortDescription">
               Short Description
             </label>
@@ -210,9 +349,11 @@ export default function ProjectForm({
               placeholder="A short summary of the project"
               required
             />
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="description">
               Description
             </label>
@@ -229,15 +370,23 @@ export default function ProjectForm({
               rows={6}
               required
             />
+
           </div>
+
         </div>
 
+        {/* ------------------------------------------------ */}
+        {/* Technologies */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-section">
+
           <h3>
             Technologies
           </h3>
 
           <div className="form-group">
+
             <label htmlFor="technologies">
               Technologies
             </label>
@@ -259,67 +408,187 @@ export default function ProjectForm({
               Separate technologies with
               commas.
             </small>
+
           </div>
+
         </div>
 
+        {/* ------------------------------------------------ */}
+        {/* Project Media */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-section">
+
           <h3>
             Project Media
           </h3>
 
+          {/* Thumbnail */}
+
           <div className="form-group">
+
             <label htmlFor="thumbnail">
-              Thumbnail URL
+              Thumbnail
             </label>
 
             <input
               id="thumbnail"
-              type="text"
-              value={thumbnail}
-              onChange={(event) =>
-                setThumbnail(
-                  event.target.value
-                )
+              type="file"
+              accept="image/*"
+              onChange={
+                handleThumbnailUpload
               }
-              placeholder="/uploads/images/project.jpg"
+              disabled={
+                uploadingThumbnail ||
+                isSubmitting
+              }
             />
 
-            <small>
-              We'll connect this field
-              to the media uploader next.
-            </small>
+            {uploadingThumbnail && (
+              <p>
+                Uploading thumbnail...
+              </p>
+            )}
+
+            {thumbnail && (
+              <div
+                style={{
+                  marginTop: "12px"
+                }}
+              >
+
+                <img
+                  src={`${
+                    import.meta.env.VITE_API_URL
+                      .replace("/api", "")
+                  }${thumbnail}`}
+                  alt="Project thumbnail preview"
+                  style={{
+                    width: "240px",
+                    height: "140px",
+                    objectFit: "cover",
+                    borderRadius: "8px"
+                  }}
+                />
+
+              </div>
+            )}
+
           </div>
 
+          {/* Project Images */}
+
           <div className="form-group">
+
             <label htmlFor="images">
-              Project Image URLs
+              Project Images
             </label>
 
             <input
               id="images"
-              type="text"
-              value={images}
-              onChange={(event) =>
-                setImages(
-                  event.target.value
-                )
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={
+                handleImagesUpload
               }
-              placeholder="/uploads/images/image1.jpg, /uploads/images/image2.jpg"
+              disabled={
+                uploadingImages ||
+                isSubmitting
+              }
             />
 
             <small>
-              Separate image URLs with
-              commas.
+              Select one or more images
+              for this project.
             </small>
+
+            {uploadingImages && (
+              <p>
+                Uploading project images...
+              </p>
+            )}
+
+            {images.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "12px",
+                  marginTop: "16px"
+                }}
+              >
+
+                {images.map(
+                  (imageUrl, index) => (
+                    <div
+                      key={`${imageUrl}-${index}`}
+                      style={{
+                        position:
+                          "relative"
+                      }}
+                    >
+
+                      <img
+                        src={`${
+                          import.meta.env
+                            .VITE_API_URL
+                            .replace(
+                              "/api",
+                              ""
+                            )
+                        }${imageUrl}`}
+                        alt={`Project image ${
+                          index + 1
+                        }`}
+                        style={{
+                          width: "180px",
+                          height: "120px",
+                          objectFit: "cover",
+                          borderRadius: "8px"
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeImage(index)
+                        }
+                        disabled={
+                          isSubmitting ||
+                          uploadingImages
+                        }
+                        style={{
+                          display: "block",
+                          marginTop: "6px"
+                        }}
+                      >
+                        Remove
+                      </button>
+
+                    </div>
+                  )
+                )}
+
+              </div>
+            )}
+
           </div>
+
         </div>
 
+        {/* ------------------------------------------------ */}
+        {/* Project Links */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-section">
+
           <h3>
             Project Links
           </h3>
 
           <div className="form-group">
+
             <label htmlFor="liveUrl">
               Live URL
             </label>
@@ -335,9 +604,11 @@ export default function ProjectForm({
               }
               placeholder="https://example.com"
             />
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="githubUrl">
               GitHub URL
             </label>
@@ -353,9 +624,11 @@ export default function ProjectForm({
               }
               placeholder="https://github.com/username/project"
             />
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="videoUrl">
               Video URL
             </label>
@@ -371,16 +644,25 @@ export default function ProjectForm({
               }
               placeholder="https://youtube.com/..."
             />
+
           </div>
+
         </div>
 
+        {/* ------------------------------------------------ */}
+        {/* Publishing */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-section">
+
           <h3>
             Publishing
           </h3>
 
           <div className="checkbox-row">
+
             <label>
+
               <input
                 type="checkbox"
                 checked={featured}
@@ -394,9 +676,11 @@ export default function ProjectForm({
               <span>
                 Featured project
               </span>
+
             </label>
 
             <label>
+
               <input
                 type="checkbox"
                 checked={published}
@@ -410,10 +694,13 @@ export default function ProjectForm({
               <span>
                 Published
               </span>
+
             </label>
+
           </div>
 
           <div className="form-group">
+
             <label htmlFor="sortOrder">
               Sort Order
             </label>
@@ -429,10 +716,17 @@ export default function ProjectForm({
                 )
               }
             />
+
           </div>
+
         </div>
 
+        {/* ------------------------------------------------ */}
+        {/* Actions */}
+        {/* ------------------------------------------------ */}
+
         <div className="form-actions">
+
           <button
             type="button"
             onClick={onCancel}
@@ -444,15 +738,22 @@ export default function ProjectForm({
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={
+              isSubmitting ||
+              uploadingThumbnail ||
+              uploadingImages
+            }
             className="primary-button"
           >
             {isSubmitting
               ? "Saving..."
               : "Save Project"}
           </button>
+
         </div>
+
       </form>
+
     </div>
   );
 }
