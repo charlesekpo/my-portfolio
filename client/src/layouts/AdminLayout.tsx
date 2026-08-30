@@ -1,32 +1,20 @@
 import { Outlet } from "react-router-dom";
 
-import { useAuth } from "../context/AuthContext";
+import AdminSidebar from "../components/admin/AdminSidebar";
+import AdminHeader from "../components/admin/AdminHeader";
 
 export default function AdminLayout() {
-  const {
-    user,
-    logout
-  } = useAuth();
-
   return (
-    <div>
-      <header>
-        <strong>
-          Admin Dashboard
-        </strong>
+    <div className="admin-layout">
+      <AdminSidebar />
 
-        <span>
-          {user?.name}
-        </span>
+      <div className="admin-main">
+        <AdminHeader />
 
-        <button onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <main>
-        <Outlet />
-      </main>
+        <main className="admin-content">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

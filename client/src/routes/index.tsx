@@ -16,6 +16,14 @@ import Contact from "../pages/public/Contact";
 import Login from "../pages/admin/Login";
 import Dashboard from "../pages/admin/Dashboard";
 
+import ProjectsAdmin from "../pages/admin/Projects";
+import SkillsAdmin from "../pages/admin/Skills";
+import ExperienceAdmin from "../pages/admin/Experience";
+import VideosAdmin from "../pages/admin/Videos";
+import SettingsAdmin from "../pages/admin/Settings";
+import MessagesAdmin from "../pages/admin/Messages";
+import MediaAdmin from "../pages/admin/Media";
+
 export const router =
   createBrowserRouter([
     {
@@ -62,6 +70,34 @@ export const router =
             {
               path: "/admin",
               element: <Dashboard />
+            },
+            {
+              path: "/admin/projects",
+              element: <ProjectsAdmin />
+            },
+            {
+              path: "/admin/skills",
+              element: <SkillsAdmin />
+            },
+            {
+              path: "/admin/experience",
+              element: <ExperienceAdmin />
+            },
+            {
+              path: "/admin/videos",
+              element: <VideosAdmin />
+            },
+            {
+              path: "/admin/settings",
+              element: <SettingsAdmin />
+            },
+            {
+              path: "/admin/messages",
+              element: <MessagesAdmin />
+            },
+            {
+              path: "/admin/media",
+              element: <MediaAdmin />
             }
           ]
         }
