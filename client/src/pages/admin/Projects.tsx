@@ -1,12 +1,23 @@
 import {
-  useQuery
+  useQuery,
+  useQueryClient
 } from "@tanstack/react-query";
 
 import {
   getProjects
 } from "../../api/projects.api";
 
+import ProjectForm from "../../components/admin/ProjectForm";
+
+import { useState } from "react";
+
 export default function Projects() {
+  const [showForm, setShowForm] =
+    useState(false);
+
+  const queryClient =
+    useQueryClient();
+
   const {
     data: projects,
     isLoading,
@@ -16,6 +27,14 @@ export default function Projects() {
     queryKey: ["projects"],
     queryFn: getProjects
   });
+
+  async function handleProjectCreated() {
+    await queryClient.invalidateQueries({
+      queryKey: ["projects"]
+    });
+
+    setShowForm(false);
+  }
 
   if (isLoading) {
     return (
@@ -40,6 +59,21 @@ export default function Projects() {
     );
   }
 
+  if (showForm) {
+    return (
+      <section>
+        <ProjectForm
+          onSuccess={
+            handleProjectCreated
+          }
+          onCancel={() =>
+            setShowForm(false)
+          }
+        />
+      </section>
+    );
+  }
+
   return (
     <section>
       <div className="page-header">
@@ -55,6 +89,9 @@ export default function Projects() {
         <button
           type="button"
           className="primary-button"
+          onClick={() =>
+            setShowForm(true)
+          }
         >
           Add Project
         </button>

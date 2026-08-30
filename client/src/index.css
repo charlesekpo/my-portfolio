@@ -485,3 +485,156 @@ input {
     height: 200px;
   }
 }
+
+.project-form-wrapper {
+  max-width: 900px;
+}
+
+.project-form-header {
+  margin-bottom: 28px;
+}
+
+.project-form-header h2 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.project-form-header p {
+  margin: 0;
+  color: #6b7280;
+}
+
+.project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-section {
+  padding: 24px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.form-section h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #111827;
+  font: inherit;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #111827;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-group small {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 22px;
+}
+
+.checkbox-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 30px;
+}
+
+.secondary-button {
+  padding: 11px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  background: #f9fafb;
+}
+
+.form-actions .primary-button {
+  padding: 11px 20px;
+}
+
+.form-error {
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+@media (max-width: 700px) {
+  .form-section {
+    padding: 18px;
+  }
+
+  .checkbox-row {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
