@@ -42,10 +42,7 @@ export default function ProjectDetails() {
     isLoading,
     isError
   } = useQuery<Project>({
-    queryKey: [
-      "project",
-      slug
-    ],
+    queryKey: ["project", slug],
     queryFn: () =>
       getProjectBySlug(slug as string),
     enabled: Boolean(slug)
@@ -54,9 +51,11 @@ export default function ProjectDetails() {
   if (isLoading) {
     return (
       <main className="public-project-details">
-        <p>
-          Loading project...
-        </p>
+        <div className="public-project-details-container">
+          <p className="public-project-details-status">
+            Loading project...
+          </p>
+        </div>
       </main>
     );
   }
@@ -64,20 +63,32 @@ export default function ProjectDetails() {
   if (isError || !project) {
     return (
       <main className="public-project-details">
-        <h1>
-          Project not found
-        </h1>
+        <div className="public-project-details-container">
+          <div className="public-project-details-not-found">
+            <h1>Project not found</h1>
 
-        <Link to="/projects">
-          Back to Projects
-        </Link>
+            <p>
+              The project you're looking for
+              doesn't exist or is no longer
+              available.
+            </p>
+
+            <Link
+              to="/projects"
+              className="public-project-back"
+            >
+              ← Back to Projects
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }
 
   return (
     <main className="public-project-details">
-      <div className="public-project-details-header">
+      <div className="public-project-details-container">
+
         <Link
           to="/projects"
           className="public-project-back"
@@ -85,143 +96,161 @@ export default function ProjectDetails() {
           ← Back to Projects
         </Link>
 
-        <div className="public-project-details-title">
-          <h1>
-            {project.title}
-          </h1>
+        <header className="public-project-details-header">
 
-          {project.featured && (
-            <span className="public-project-badge">
-              Featured
-            </span>
-          )}
-        </div>
+          <div className="public-project-details-title">
+            <h1>{project.title}</h1>
 
-        <p className="public-project-details-short-description">
-          {project.shortDescription}
-        </p>
-      </div>
-
-      {project.thumbnail && (
-        <div className="public-project-details-thumbnail">
-          <img
-            src={getMediaUrl(
-              project.thumbnail
+            {project.featured && (
+              <span className="public-project-badge">
+                Featured
+              </span>
             )}
-            alt={project.title}
-          />
-        </div>
-      )}
+          </div>
 
-      <div className="public-project-details-body">
-        <section>
-          <h2>
-            About This Project
-          </h2>
-
-          <p>
-            {project.description}
+          <p className="public-project-details-short-description">
+            {project.shortDescription}
           </p>
-        </section>
 
-        {project.technologies.length >
-          0 && (
-          <section>
-            <h2>
-              Technologies
-            </h2>
-
+          {project.technologies.length > 0 && (
             <div className="public-project-details-technologies">
               {project.technologies.map(
-                (
-                  technology: string
-                ) => (
-                  <span
-                    key={technology}
-                  >
+                (technology) => (
+                  <span key={technology}>
                     {technology}
                   </span>
                 )
               )}
             </div>
-          </section>
+          )}
+
+        </header>
+
+        {project.thumbnail && (
+          <div className="public-project-details-thumbnail">
+            <img
+              src={getMediaUrl(
+                project.thumbnail
+              )}
+              alt={project.title}
+            />
+          </div>
         )}
 
-        {project.images.length >
-          0 && (
-          <section>
-            <h2>
-              Project Images
-            </h2>
+        <div className="public-project-details-layout">
 
-            <div className="public-project-details-gallery">
-              {project.images.map(
-                (
-                  image: string,
-                  index: number
-                ) => (
-                  <img
-                    key={`${image}-${index}`}
-                    src={getMediaUrl(
-                      image
+          <article className="public-project-details-main">
+
+            <section className="public-project-details-section">
+              <h2>About This Project</h2>
+
+              <p>
+                {project.description}
+              </p>
+            </section>
+
+            {project.images.length > 0 && (
+              <section className="public-project-details-section">
+                <h2>Project Screenshots</h2>
+
+                <div className="public-project-details-gallery">
+                  {project.images.map(
+                    (
+                      image,
+                      index
+                    ) => (
+                      <img
+                        key={`${image}-${index}`}
+                        src={getMediaUrl(
+                          image
+                        )}
+                        alt={`${project.title} screenshot ${
+                          index + 1
+                        }`}
+                      />
+                    )
+                  )}
+                </div>
+              </section>
+            )}
+
+          </article>
+
+          <aside className="public-project-details-sidebar">
+
+            <div className="public-project-details-card">
+              <h2>Project Details</h2>
+
+              <div className="public-project-detail-item">
+                <span>Technologies</span>
+
+                <div className="public-project-details-technologies">
+                  {project.technologies.map(
+                    (technology) => (
+                      <span
+                        key={technology}
+                      >
+                        {technology}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {(project.liveUrl ||
+                project.githubUrl ||
+                project.videoUrl) && (
+                <div className="public-project-detail-item">
+                  <span>Links</span>
+
+                  <div className="public-project-details-links">
+
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="public-project-details-link primary"
+                      >
+                        View Live Project
+                        <span>↗</span>
+                      </a>
                     )}
-                    alt={`${project.title} screenshot ${
-                      index + 1
-                    }`}
-                  />
-                )
+
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="public-project-details-link"
+                      >
+                        View on GitHub
+                        <span>↗</span>
+                      </a>
+                    )}
+
+                    {project.videoUrl && (
+                      <a
+                        href={project.videoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="public-project-details-link"
+                      >
+                        Watch Video
+                        <span>↗</span>
+                      </a>
+                    )}
+
+                  </div>
+                </div>
               )}
+
             </div>
-          </section>
-        )}
 
-        {(project.liveUrl ||
-          project.githubUrl ||
-          project.videoUrl) && (
-          <section>
-            <h2>
-              Project Links
-            </h2>
+          </aside>
 
-            <div className="public-project-details-links">
-              {project.liveUrl && (
-                <a
-                  href={
-                    project.liveUrl
-                  }
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Live Project
-                </a>
-              )}
+        </div>
 
-              {project.githubUrl && (
-                <a
-                  href={
-                    project.githubUrl
-                  }
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub
-                </a>
-              )}
-
-              {project.videoUrl && (
-                <a
-                  href={
-                    project.videoUrl
-                  }
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Video
-                </a>
-              )}
-            </div>
-          </section>
-        )}
       </div>
     </main>
   );
