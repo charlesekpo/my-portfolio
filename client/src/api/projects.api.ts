@@ -108,3 +108,24 @@ export async function deleteProject(
     `/projects/${id}`
   );
 }
+
+export async function getPublicProjectBySlug(
+  slug: string
+) {
+  const response =
+    await apiClient.get<ProjectResponse>(
+      `/projects/slug/${slug}`
+    );
+
+  return response.data.data;
+}
+
+export async function getPublicProjects() {
+  const response =
+    await apiClient.get<{
+      success: boolean;
+      data: Project[];
+    }>("/projects/public");
+
+  return response.data.data;
+}

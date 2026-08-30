@@ -1,43 +1,39 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import {
+  useQuery
+} from "@tanstack/react-query";
 
 import {
-  getProjects,
-  type Project
+  Link
+} from "react-router-dom";
+
+import {
+  getPublicProjects
 } from "../../api/projects.api";
 
-function getMediaUrl(url: string) {
-  if (!url) {
+function getMediaUrl(
+  path: string
+) {
+  if (!path) {
     return "";
   }
 
-  if (
-    url.startsWith("http://") ||
-    url.startsWith("https://")
-  ) {
-    return url;
-  }
-
   const apiUrl =
-    import.meta.env.VITE_API_URL || "";
+    import.meta.env.VITE_API_URL;
 
-  const serverUrl = apiUrl.replace(
-    /\/api\/?$/,
-    ""
-  );
+  const baseUrl =
+    apiUrl.replace("/api", "");
 
-  return `${serverUrl}${url}`;
+  return `${baseUrl}${path}`;
 }
 
 export default function Projects() {
   const {
     data: projects,
     isLoading,
-    isError,
-    error
+    isError
   } = useQuery({
     queryKey: ["public-projects"],
-    queryFn: getProjects
+    queryFn: getPublicProjects
   });
 
   if (isLoading) {
@@ -47,30 +43,29 @@ export default function Projects() {
           <h1>Projects</h1>
 
           <p>
-            Things I've built and worked on.
+            A selection of my work and
+            projects.
           </p>
         </div>
 
         <div className="public-projects-loading">
-          <p>Loading projects...</p>
+          <p>
+            Loading projects...
+          </p>
         </div>
       </section>
     );
   }
 
   if (isError) {
-    console.error(
-      "Failed to load public projects:",
-      error
-    );
-
     return (
       <section className="public-projects-page">
         <div className="public-page-header">
           <h1>Projects</h1>
 
           <p>
-            Things I've built and worked on.
+            A selection of my work and
+            projects.
           </p>
         </div>
 
@@ -83,121 +78,117 @@ export default function Projects() {
     );
   }
 
-  const publishedProjects =
-    projects?.filter(
-      (project: Project) =>
-        project.published
-    ) ?? [];
-
   return (
     <section className="public-projects-page">
       <div className="public-page-header">
         <h1>Projects</h1>
 
         <p>
-          Things I've built and worked on.
+          A selection of my work and
+          projects.
         </p>
       </div>
 
-      {publishedProjects.length === 0 ? (
-        <div className="public-projects-empty">
-          <h2>No projects available</h2>
-
-          <p>
-            Projects will appear here once
-            they are published.
-          </p>
-        </div>
-      ) : (
+      {projects &&
+      projects.length > 0 ? (
         <div className="public-projects-grid">
-          {publishedProjects.map(
-            (project) => (
-              <article
-                key={project._id}
-                className="public-project-card"
+          {projects.map((project) => (
+            <article
+              key={project._id}
+              className="public-project-card"
+            >
+              <Link
+                to={`/projects/${project.slug}`}
+                className="public-project-image-link"
               >
                 {project.thumbnail ? (
-                  <Link
-                    to={`/projects/${project.slug}`}
-                    className="public-project-image-link"
-                  >
-                    <img
-                      src={getMediaUrl(
-                        project.thumbnail
-                      )}
-                      alt={project.title}
-                      className="public-project-image"
-                    />
-                  </Link>
+                  <img
+                    src={getMediaUrl(
+                      project.thumbnail
+                    )}
+                    alt={project.title}
+                    className="public-project-image"
+                  />
                 ) : (
                   <div className="public-project-image-placeholder">
-                    <span>
-                      {project.title}
-                    </span>
+                    No image
                   </div>
                 )}
+              </Link>
 
-                <div className="public-project-content">
-                  <div className="public-project-title-row">
-                    <h2>
-                      {project.title}
-                    </h2>
+              <div className="public-project-content">
+                <div className="public-project-title-row">
+                  <h2>
+                    {project.title}
+                  </h2>
 
-                    {project.featured && (
-                      <span className="public-project-badge">
-                        Featured
+                  {project.featured && (
+                    <span className="public-project-badge">
+                      Featured
+                    </span>
+                  )}
+                </div>
+
+                <p className="public-project-description">
+                  {project.shortDescription}
+                </p>
+
+                <div className="public-project-technologies">
+                  {project.technologies.map(
+                    (technology) => (
+                      <span
+                        key={technology}
+                      >
+                        {technology}
                       </span>
-                    )}
-                  </div>
+                    )
+                  )}
+                </div>
 
-                  <p className="public-project-description">
-                    {
-                      project.shortDescription
-                    }
-                  </p>
+                <div className="public-project-actions">
+                  <Link
+                    to={`/projects/${project.slug}`}
+                    className="primary-button"
+                  >
+                    View Project
+                  </Link>
 
-                  {project.technologies
-                    .length > 0 && (
-                    <div className="public-project-technologies">
-                      {project.technologies.map(
-                        (technology) => (
-                          <span
-                            key={
-                              technology
-                            }
-                          >
-                            {technology}
-                          </span>
-                        )
-                      )}
-                    </div>
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="secondary-button"
+                    >
+                      Live Site
+                    </a>
                   )}
 
-                  <div className="public-project-actions">
-                    <Link
-                      to={`/projects/${project.slug}`}
-                      className="primary-button"
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="secondary-button"
                     >
-                      View Project
-                    </Link>
-
-                    {project.liveUrl && (
-                      <a
-                        href={
-                          project.liveUrl
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="secondary-button"
-                      >
-                        Live Site
-                      </a>
-                    )}
-                  </div>
+                      GitHub
+                    </a>
+                  )}
                 </div>
-              </article>
-            )
-          )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="public-projects-empty">
+          <h2>
+            No projects yet
+          </h2>
+
+          <p>
+            Projects will appear here
+            once they are published.
+          </p>
         </div>
       )}
     </section>
