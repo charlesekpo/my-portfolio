@@ -9,6 +9,8 @@ coverage/
 
 server/uploads/
 
+.git-corrupted/
+
 .DS_Store
 
 *.log

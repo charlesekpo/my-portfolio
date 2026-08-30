@@ -19,34 +19,20 @@ export default function ProjectForm({
 }: ProjectFormProps) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [shortDescription, setShortDescription] =
-    useState("");
-  const [description, setDescription] =
-    useState("");
-  const [technologies, setTechnologies] =
-    useState("");
-  const [thumbnail, setThumbnail] =
-    useState("");
-  const [images, setImages] =
-    useState("");
-  const [liveUrl, setLiveUrl] =
-    useState("");
-  const [githubUrl, setGithubUrl] =
-    useState("");
-  const [videoUrl, setVideoUrl] =
-    useState("");
-  const [featured, setFeatured] =
-    useState(false);
-  const [published, setPublished] =
-    useState(true);
-  const [sortOrder, setSortOrder] =
-    useState("0");
-
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  const [shortDescription, setShortDescription] = useState("");
+  const [description, setDescription] = useState("");
+  const [technologies, setTechnologies] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [images, setImages] = useState("");
+  const [liveUrl, setLiveUrl] = useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [featured, setFeatured] = useState(false);
+  const [published, setPublished] = useState(true);
+  const [sortOrder, setSortOrder] = useState("0");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   function generateSlug(value: string) {
     return value
@@ -57,12 +43,10 @@ export default function ProjectForm({
       .replace(/-+/g, "-");
   }
 
-  function handleTitleChange(
-    value: string
-  ) {
+  function handleTitleChange(value: string) {
     setTitle(value);
 
-    if (!slug) {
+    if (!slugManuallyEdited) {
       setSlug(generateSlug(value));
     }
   }
@@ -194,13 +178,12 @@ export default function ProjectForm({
               id="slug"
               type="text"
               value={slug}
-              onChange={(event) =>
+              onChange={(event) => {
                 setSlug(
-                  generateSlug(
-                    event.target.value
-                  )
-                )
-              }
+                  generateSlug(event.target.value)
+                );
+                setSlugManuallyEdited(true);
+              }}
               placeholder="my-portfolio-website"
               required
             />
