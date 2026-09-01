@@ -7,12 +7,12 @@ import {
 } from "react-router-dom";
 
 import {
-  getSettings
-} from "../../api/settings.api";
-
-import {
   getPublicProjects
 } from "../../api/projects.api";
+
+import {
+  getSettings
+} from "../../api/settings.api";
 
 import {
   getSkills
@@ -21,6 +21,16 @@ import {
 import {
   getExperience
 } from "../../api/experience.api";
+
+import {
+  getVideos
+} from "../../api/videos.api";
+
+const API_URL =
+  import.meta.env.VITE_API_URL?.replace(
+    /\/api\/?$/,
+    ""
+  ) ?? "";
 
 function getMediaUrl(
   path?: string
@@ -36,10 +46,7 @@ function getMediaUrl(
     return path;
   }
 
-  const apiUrl =
-    import.meta.env.VITE_API_URL || "";
-
-  return `${apiUrl.replace(/\/api\/?$/, "")}${path}`;
+  return `${API_URL}${path}`;
 }
 
 function formatDate(
@@ -49,19 +56,19 @@ function formatDate(
     return "";
   }
 
-  return new Date(value).toLocaleDateString(
+  return new Intl.DateTimeFormat(
     "en-US",
     {
       month: "short",
       year: "numeric"
     }
-  );
+  ).format(new Date(value));
 }
 
 export default function Home() {
   const settingsQuery =
     useQuery({
-      queryKey: ["public-settings"],
+      queryKey: ["settings"],
       queryFn: getSettings
     });
 
@@ -73,145 +80,196 @@ export default function Home() {
 
   const skillsQuery =
     useQuery({
-      queryKey: ["public-skills"],
+      queryKey: ["skills"],
       queryFn: getSkills
     });
 
   const experienceQuery =
     useQuery({
-      queryKey: ["public-experience"],
+      queryKey: ["experience"],
       queryFn: getExperience
+    });
+
+  const videosQuery =
+    useQuery({
+      queryKey: ["videos"],
+      queryFn: getVideos
     });
 
   const settings =
     settingsQuery.data;
 
-  const projects =
-    projectsQuery.data ?? [];
-
-  const skills =
-    (skillsQuery.data ?? [])
-      .filter(
-        (skill) => skill.published
-      )
-      .sort(
-        (a, b) =>
-          a.sortOrder - b.sortOrder
-      );
-
-  const experience =
-    (experienceQuery.data ?? [])
-      .filter(
-        (item) => item.published
-      )
-      .sort(
-        (a, b) =>
-          a.sortOrder - b.sortOrder
-      );
-
   const featuredProjects =
-    projects
-      .filter(
-        (project) => project.featured
+    projectsQuery.data
+      ?.filter(
+        (project) =>
+          project.featured
       )
-      .slice(0, 3);
+      .slice(0, 3) ?? [];
 
-  const displayedProjects =
-    featuredProjects.length > 0
-      ? featuredProjects
-      : projects.slice(0, 3);
+  const visibleSkills =
+    skillsQuery.data?.slice(0, 8) ?? [];
 
-  const skillsByCategory =
-    skills.reduce<
-      Record<string, typeof skills>
-    >(
-      (groups, skill) => {
-        if (!groups[skill.category]) {
-          groups[skill.category] = [];
-        }
+  const visibleExperience =
+    experienceQuery.data?.slice(0, 3) ?? [];
 
-        groups[skill.category].push(
-          skill
-        );
+  const featuredVideos =
+    videosQuery.data
+      ?.filter(
+        (video) =>
+          video.featured
+      )
+      .slice(0, 3) ?? [];
 
-        return groups;
-      },
-      {}
-    );
-
-  if (
+  const isLoading =
     settingsQuery.isLoading ||
     projectsQuery.isLoading ||
     skillsQuery.isLoading ||
-    experienceQuery.isLoading
-  ) {
+    experienceQuery.isLoading ||
+    videosQuery.isLoading;
+
+  if (isLoading) {
     return (
-      <div className="public-home-loading">
-        Loading portfolio...
-      </div>
+      <main className="home-page">
+        <section className="home-loading">
+          <div className="home-loading-spinner" />
+          <p>Loading portfolio...</p>
+        </section>
+      </main>
     );
   }
 
   return (
-    <div className="public-home">
+    <main className="home-page">
+
+      {/* =====================================================
+          Hero
+      ===================================================== */}
+
       <section className="home-hero">
         <div className="home-hero-content">
-          {settings?.availableForWork && (
-            <div className="availability-badge">
-              <span />
-              Available for work
+
+          <div className="home-hero-copy">
+
+            {settings?.availableForWork && (
+              <div className="home-availability">
+                <span />
+                Available for work
+              </div>
+            )}
+
+            <p className="home-eyebrow">
+              Welcome to my portfolio
+            </p>
+
+            <h1>
+              {settings?.fullName ??
+                "Your Name"}
+            </h1>
+
+            <h2>
+              {settings?.professionalTitle ??
+                "Full-Stack Developer"}
+            </h2>
+
+            <p className="home-hero-bio">
+              {settings?.shortBio ??
+                "I build modern, scalable and user-focused web applications."}
+            </p>
+
+            <div className="home-hero-actions">
+              <Link
+                to="/projects"
+                className="home-button home-button-primary"
+              >
+                View Projects
+              </Link>
+
+              <Link
+                to="/contact"
+                className="home-button home-button-secondary"
+              >
+                Contact Me
+              </Link>
             </div>
-          )}
 
-          <p className="home-eyebrow">
-            {settings?.professionalTitle ||
-              "Software Developer"}
-          </p>
+            <div className="home-social-links">
 
-          <h1>
-            {settings?.fullName ||
-              "Welcome to my portfolio"}
-          </h1>
-
-          <p className="home-hero-bio">
-            {settings?.shortBio ||
-              "I build modern web applications and digital experiences."}
-          </p>
-
-          <div className="home-hero-actions">
-            <Link
-              to="/projects"
-              className="primary-button"
-            >
-              View Projects
-            </Link>
-
-            <Link
-              to="/contact"
-              className="secondary-button"
-            >
-              Contact Me
-            </Link>
-          </div>
-        </div>
-
-        {settings?.profileImage && (
-          <div className="home-hero-image-wrapper">
-            <img
-              src={getMediaUrl(
-                settings.profileImage
+              {settings?.githubUrl && (
+                <a
+                  href={settings.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub
+                </a>
               )}
-              alt={
-                settings.fullName
-              }
-              className="home-hero-image"
-            />
+
+              {settings?.linkedinUrl && (
+                <a
+                  href={settings.linkedinUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  LinkedIn
+                </a>
+              )}
+
+              {settings?.twitterUrl && (
+                <a
+                  href={settings.twitterUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Twitter
+                </a>
+              )}
+
+            </div>
           </div>
-        )}
+
+          <div className="home-hero-visual">
+            {settings?.profileImage ? (
+              <img
+                src={getMediaUrl(
+                  settings.profileImage
+                )}
+                alt={
+                  settings.fullName
+                }
+                className="home-profile-image"
+              />
+            ) : (
+              <div className="home-profile-placeholder">
+                <span>
+                  {(
+                    settings?.fullName ??
+                    "YN"
+                  )
+                    .split(" ")
+                    .map(
+                      (part) =>
+                        part[0]
+                    )
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
+              </div>
+            )}
+          </div>
+
+        </div>
       </section>
 
-      {displayedProjects.length > 0 && (
+
+      {/* =====================================================
+          Featured Projects
+      ===================================================== */}
+
+      {featuredProjects.length > 0 && (
         <section className="home-section">
+
           <div className="home-section-header">
             <div>
               <p className="home-section-eyebrow">
@@ -221,15 +279,24 @@ export default function Home() {
               <h2>
                 Featured Projects
               </h2>
+
+              <p>
+                A selection of projects I've
+                built and worked on.
+              </p>
             </div>
 
-            <Link to="/projects">
+            <Link
+              to="/projects"
+              className="home-section-link"
+            >
               View all projects →
             </Link>
           </div>
 
-          <div className="home-project-grid">
-            {displayedProjects.map(
+          <div className="home-projects-grid">
+
+            {featuredProjects.map(
               (project) => (
                 <article
                   key={project._id}
@@ -257,9 +324,16 @@ export default function Home() {
                   </Link>
 
                   <div className="home-project-content">
-                    <h3>
-                      {project.title}
-                    </h3>
+
+                    <div className="home-project-heading">
+                      <h3>
+                        {project.title}
+                      </h3>
+
+                      <span>
+                        Featured
+                      </span>
+                    </div>
 
                     <p>
                       {
@@ -271,17 +345,13 @@ export default function Home() {
                       {project.technologies
                         .slice(0, 5)
                         .map(
-                          (
-                            technology
-                          ) => (
+                          (technology) => (
                             <span
                               key={
                                 technology
                               }
                             >
-                              {
-                                technology
-                              }
+                              {technology}
                             </span>
                           )
                         )}
@@ -289,22 +359,28 @@ export default function Home() {
 
                     <Link
                       to={`/projects/${project.slug}`}
-                      className="text-link"
+                      className="home-project-link"
                     >
                       View project →
                     </Link>
+
                   </div>
                 </article>
               )
             )}
+
           </div>
         </section>
       )}
 
-      {Object.keys(
-        skillsByCategory
-      ).length > 0 && (
+
+      {/* =====================================================
+          Skills
+      ===================================================== */}
+
+      {visibleSkills.length > 0 && (
         <section className="home-section home-skills-section">
+
           <div className="home-section-header">
             <div>
               <p className="home-section-eyebrow">
@@ -314,202 +390,279 @@ export default function Home() {
               <h2>
                 Skills & Technologies
               </h2>
+
+              <p>
+                Technologies and tools I use
+                to build reliable applications.
+              </p>
             </div>
           </div>
 
           <div className="home-skills-grid">
-            {Object.entries(
-              skillsByCategory
-            ).map(
-              ([
-                category,
-                categorySkills
-              ]) => (
+
+            {visibleSkills.map(
+              (skill) => (
                 <div
-                  key={category}
-                  className="home-skill-group"
+                  key={skill._id}
+                  className="home-skill-card"
                 >
-                  <h3>
-                    {category
-                      .charAt(0)
-                      .toUpperCase() +
-                      category.slice(
-                        1
-                      )}
-                  </h3>
+                  <div className="home-skill-top">
+                    <div>
+                      <h3>
+                        {skill.name}
+                      </h3>
 
-                  <div className="home-skill-list">
-                    {categorySkills.map(
-                      (skill) => (
-                        <div
-                          key={
-                            skill._id
-                          }
-                          className="home-skill"
-                        >
-                          <div className="home-skill-top">
-                            <span>
-                              {
-                                skill.name
-                              }
-                            </span>
+                      <span>
+                        {skill.category}
+                      </span>
+                    </div>
 
-                            <span>
-                              {
-                                skill.level
-                              }%
-                            </span>
-                          </div>
-
-                          <div className="skill-bar">
-                            <div
-                              className="skill-bar-fill"
-                              style={{
-                                width: `${skill.level}%`
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )
-                    )}
+                    <strong>
+                      {skill.level}%
+                    </strong>
                   </div>
+
+                  <div className="home-skill-bar">
+                    <span
+                      style={{
+                        width: `${skill.level}%`
+                      }}
+                    />
+                  </div>
+
+                  {skill.description && (
+                    <p>
+                      {skill.description}
+                    </p>
+                  )}
                 </div>
               )
             )}
+
           </div>
         </section>
       )}
 
-      {experience.length > 0 && (
+
+      {/* =====================================================
+          Experience
+      ===================================================== */}
+
+      {visibleExperience.length > 0 && (
         <section className="home-section">
+
           <div className="home-section-header">
             <div>
               <p className="home-section-eyebrow">
-                My background
+                My journey
               </p>
 
               <h2>
                 Experience
               </h2>
+
+              <p>
+                Where I've worked and what
+                I've been building.
+              </p>
             </div>
+
+            <Link
+              to="/about"
+              className="home-section-link"
+            >
+              More about me →
+            </Link>
           </div>
 
           <div className="home-experience-list">
-            {experience
-              .slice(0, 4)
-              .map((item) => (
+
+            {visibleExperience.map(
+              (experience) => (
                 <article
-                  key={item._id}
-                  className="home-experience-item"
+                  key={experience._id}
+                  className="home-experience-card"
                 >
                   <div className="home-experience-date">
                     <span>
                       {formatDate(
-                        item.startDate
+                        experience.startDate
                       )}
                     </span>
 
                     <span>
-                      {item.current
+                      —
+                    </span>
+
+                    <span>
+                      {experience.current
                         ? "Present"
                         : formatDate(
-                            item.endDate
+                            experience.endDate
                           )}
                     </span>
                   </div>
 
                   <div className="home-experience-content">
                     <h3>
-                      {item.position}
+                      {experience.position}
                     </h3>
 
-                    <p className="home-experience-company">
-                      {item.company}
-                      {item.location
-                        ? ` · ${item.location}`
-                        : ""}
-                    </p>
+                    <h4>
+                      {experience.company}
+                    </h4>
+
+                    {experience.location && (
+                      <p className="home-experience-location">
+                        {experience.location}
+                      </p>
+                    )}
 
                     <p>
-                      {item.description}
+                      {experience.description}
                     </p>
 
-                    {item.technologies
-                      .length > 0 && (
-                      <div className="home-experience-technologies">
-                        {item.technologies.map(
-                          (
-                            technology
-                          ) => (
-                            <span
-                              key={
-                                technology
-                              }
-                            >
-                              {
-                                technology
-                              }
-                            </span>
-                          )
-                        )}
-                      </div>
-                    )}
+                    <div className="home-experience-technologies">
+                      {experience.technologies.map(
+                        (technology) => (
+                          <span
+                            key={
+                              technology
+                            }
+                          >
+                            {technology}
+                          </span>
+                        )
+                      )}
+                    </div>
                   </div>
                 </article>
-              ))}
+              )
+            )}
+
           </div>
         </section>
       )}
 
-      {settings?.about && (
-        <section className="home-about-section">
-          <div>
-            <p className="home-section-eyebrow">
-              About me
-            </p>
 
-            <h2>
-              Building useful things
-              with technology.
-            </h2>
-          </div>
+      {/* =====================================================
+          Videos
+      ===================================================== */}
 
-          <div>
-            <p>
-              {settings.about}
-            </p>
+      {featuredVideos.length > 0 && (
+        <section className="home-section">
+
+          <div className="home-section-header">
+            <div>
+              <p className="home-section-eyebrow">
+                Watch & learn
+              </p>
+
+              <h2>
+                Featured Videos
+              </h2>
+
+              <p>
+                Tutorials, technical content
+                and other videos.
+              </p>
+            </div>
 
             <Link
-              to="/about"
-              className="text-link"
+              to="/videos"
+              className="home-section-link"
             >
-              More about me →
+              View all videos →
             </Link>
+          </div>
+
+          <div className="home-videos-grid">
+
+            {featuredVideos.map(
+              (video) => (
+                <article
+                  key={video._id}
+                  className="home-video-card"
+                >
+                  <a
+                    href={video.videoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="home-video-thumbnail"
+                  >
+                    {video.thumbnail ? (
+                      <img
+                        src={getMediaUrl(
+                          video.thumbnail
+                        )}
+                        alt={
+                          video.title
+                        }
+                      />
+                    ) : (
+                      <div>
+                        Watch video
+                      </div>
+                    )}
+
+                    <span className="home-video-play">
+                      ▶
+                    </span>
+                  </a>
+
+                  <div className="home-video-content">
+                    <span className="home-video-platform">
+                      {video.platform}
+                    </span>
+
+                    <h3>
+                      {video.title}
+                    </h3>
+
+                    <p>
+                      {video.description}
+                    </p>
+                  </div>
+                </article>
+              )
+            )}
+
           </div>
         </section>
       )}
 
-      <section className="home-contact-cta">
-        <p className="home-section-eyebrow">
-          Let's work together
-        </p>
 
-        <h2>
-          Have a project in mind?
-        </h2>
+      {/* =====================================================
+          CTA
+      ===================================================== */}
 
-        <p>
-          Let's talk about how we can
-          build something great.
-        </p>
+      <section className="home-cta">
+
+        <div>
+          <p className="home-section-eyebrow">
+            Let's work together
+          </p>
+
+          <h2>
+            Have a project in mind?
+          </h2>
+
+          <p>
+            I'm always open to discussing
+            new projects, ideas and
+            opportunities.
+          </p>
+        </div>
 
         <Link
           to="/contact"
-          className="primary-button"
+          className="home-button home-button-primary"
         >
-          Get in touch
+          Get in touch →
         </Link>
+
       </section>
-    </div>
+
+    </main>
   );
 }
