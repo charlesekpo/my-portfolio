@@ -1,10 +1,39 @@
 import apiClient from "./client";
-import type { Media } from "../types/media";
 
-interface UploadMediaResponse {
+export type MediaType =
+  | "image"
+  | "document";
+
+export interface Media {
+  _id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  type: MediaType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MediaResponse {
   success: boolean;
-  message: string;
+  data: Media[];
+}
+
+interface SingleMediaResponse {
+  success: boolean;
+  message?: string;
   data: Media;
+}
+
+export async function getMedia() {
+  const response =
+    await apiClient.get<MediaResponse>(
+      "/media"
+    );
+
+  return response.data.data;
 }
 
 export async function uploadMedia(
@@ -12,18 +41,24 @@ export async function uploadMedia(
 ): Promise<Media> {
   const formData = new FormData();
 
-  formData.append("file", file);
+  formData.append(
+    "file",
+    file
+  );
 
   const response =
-    await apiClient.post<UploadMediaResponse>(
+    await apiClient.post<SingleMediaResponse>(
       "/media",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      }
+      formData
     );
 
   return response.data.data;
+}
+
+export async function deleteMedia(
+  id: string
+) {
+  await apiClient.delete(
+    `/media/${id}`
+  );
 }

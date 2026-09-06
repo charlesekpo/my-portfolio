@@ -94,17 +94,6 @@ export default function PublicLayout() {
             </NavLink>
 
             <NavLink
-              to="/videos"
-              className={({ isActive }) =>
-                isActive
-                  ? "public-nav-link active"
-                  : "public-nav-link"
-              }
-            >
-              Videos
-            </NavLink>
-
-            <NavLink
               to="/contact"
               className={({ isActive }) =>
                 isActive
@@ -169,9 +158,7 @@ export default function PublicLayout() {
                 Projects
               </NavLink>
 
-              <NavLink to="/videos">
-                Videos
-              </NavLink>
+  
 
               <NavLink to="/contact">
                 Contact

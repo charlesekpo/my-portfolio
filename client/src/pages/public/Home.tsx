@@ -22,10 +22,6 @@ import {
   getExperience
 } from "../../api/experience.api";
 
-import {
-  getVideos
-} from "../../api/videos.api";
-
 const API_URL =
   import.meta.env.VITE_API_URL?.replace(
     /\/api\/?$/,
@@ -90,12 +86,6 @@ export default function Home() {
       queryFn: getExperience
     });
 
-  const videosQuery =
-    useQuery({
-      queryKey: ["videos"],
-      queryFn: getVideos
-    });
-
   const settings =
     settingsQuery.data;
 
@@ -112,32 +102,6 @@ export default function Home() {
 
   const visibleExperience =
     experienceQuery.data?.slice(0, 3) ?? [];
-
-  const featuredVideos =
-    videosQuery.data
-      ?.filter(
-        (video) =>
-          video.featured
-      )
-      .slice(0, 3) ?? [];
-
-  const isLoading =
-    settingsQuery.isLoading ||
-    projectsQuery.isLoading ||
-    skillsQuery.isLoading ||
-    experienceQuery.isLoading ||
-    videosQuery.isLoading;
-
-  if (isLoading) {
-    return (
-      <main className="home-page">
-        <section className="home-loading">
-          <div className="home-loading-spinner" />
-          <p>Loading portfolio...</p>
-        </section>
-      </main>
-    );
-  }
 
   return (
     <main className="home-page">
@@ -543,94 +507,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
-
-      {/* =====================================================
-          Videos
-      ===================================================== */}
-
-      {featuredVideos.length > 0 && (
-        <section className="home-section">
-
-          <div className="home-section-header">
-            <div>
-              <p className="home-section-eyebrow">
-                Watch & learn
-              </p>
-
-              <h2>
-                Featured Videos
-              </h2>
-
-              <p>
-                Tutorials, technical content
-                and other videos.
-              </p>
-            </div>
-
-            <Link
-              to="/videos"
-              className="home-section-link"
-            >
-              View all videos →
-            </Link>
-          </div>
-
-          <div className="home-videos-grid">
-
-            {featuredVideos.map(
-              (video) => (
-                <article
-                  key={video._id}
-                  className="home-video-card"
-                >
-                  <a
-                    href={video.videoUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="home-video-thumbnail"
-                  >
-                    {video.thumbnail ? (
-                      <img
-                        src={getMediaUrl(
-                          video.thumbnail
-                        )}
-                        alt={
-                          video.title
-                        }
-                      />
-                    ) : (
-                      <div>
-                        Watch video
-                      </div>
-                    )}
-
-                    <span className="home-video-play">
-                      ▶
-                    </span>
-                  </a>
-
-                  <div className="home-video-content">
-                    <span className="home-video-platform">
-                      {video.platform}
-                    </span>
-
-                    <h3>
-                      {video.title}
-                    </h3>
-
-                    <p>
-                      {video.description}
-                    </p>
-                  </div>
-                </article>
-              )
-            )}
-
-          </div>
-        </section>
-      )}
-
 
       {/* =====================================================
           CTA
