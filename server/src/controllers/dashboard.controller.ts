@@ -1,11 +1,35 @@
-import { Request, Response } from "express";
+import type {
+  Request,
+  Response
+} from "express";
 
-import { Project } from "../models/Project.js";
-import { Skill } from "../models/Skill.js";
-import { Experience } from "../models/Experience.js";
-import { Video } from "../models/Video.js";
-import { Message } from "../models/Message.js";
-import { Media } from "../models/Media.js";
+import {
+  Project
+} from "../models/Project.js";
+
+import {
+  Skill
+} from "../models/Skill.js";
+
+import {
+  Experience
+} from "../models/Experience.js";
+
+import {
+  Education
+} from "../models/Education.js";
+
+import {
+  Video
+} from "../models/Video.js";
+
+import {
+  Message
+} from "../models/Message.js";
+
+import {
+  Media
+} from "../models/Media.js";
 
 export async function getDashboardStats(
   _req: Request,
@@ -15,6 +39,7 @@ export async function getDashboardStats(
     projects,
     skills,
     experience,
+    education,
     videos,
     messages,
     media
@@ -22,6 +47,7 @@ export async function getDashboardStats(
     Project.countDocuments(),
     Skill.countDocuments(),
     Experience.countDocuments(),
+    Education.countDocuments(),
     Video.countDocuments(),
     Message.countDocuments(),
     Media.countDocuments()
@@ -33,6 +59,7 @@ export async function getDashboardStats(
       projects,
       skills,
       experience,
+      education,
       videos,
       messages,
       media

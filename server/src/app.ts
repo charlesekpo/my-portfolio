@@ -14,6 +14,7 @@ import messageRoutes from "./routes/message.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
 import path from "node:path";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import educationRoutes from "./routes/education.routes.js";
 
 import { env } from "./config/env.js";
 
@@ -101,6 +102,11 @@ app.use(
 app.use(
   "/api/experience",
   experienceRoutes
+);
+
+app.use(
+  "/api/education",
+  educationRoutes
 );
 
 app.use(

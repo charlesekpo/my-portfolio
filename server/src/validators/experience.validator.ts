@@ -1,5 +1,68 @@
 import * as z from "zod";
 
+/*
+|--------------------------------------------------------------------------
+| Date helper
+|--------------------------------------------------------------------------
+|
+| Accept:
+| - YYYY-MM-DD strings
+| - Date objects
+| - undefined
+|
+| Convert empty strings to undefined.
+|
+*/
+
+const optionalDate = z.preprocess(
+  (value) => {
+    if (value === "") {
+      return undefined;
+    }
+
+    return value;
+  },
+  z.union([
+    z.string(),
+    z.date()
+  ])
+  .transform((value) => {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    return new Date(value);
+  })
+  .refine(
+    (value) => !Number.isNaN(value.getTime()),
+    {
+      message: "Invalid date"
+    }
+  )
+  .optional()
+);
+
+const requiredDate = z.preprocess(
+  (value) => value,
+  z.union([
+    z.string(),
+    z.date()
+  ])
+  .transform((value) => {
+    if (value instanceof Date) {
+      return value;
+    }
+
+    return new Date(value);
+  })
+  .refine(
+    (value) => !Number.isNaN(value.getTime()),
+    {
+      message: "Invalid date"
+    }
+  )
+);
+
 const experienceFields = {
   company: z
     .string()
@@ -18,11 +81,9 @@ const experienceFields = {
     .trim()
     .default(""),
 
-  startDate: z.coerce.date(),
+  startDate: requiredDate,
 
-  endDate: z.coerce
-    .date()
-    .optional(),
+  endDate: optionalDate,
 
   current: z
     .boolean()
@@ -97,13 +158,6 @@ export const createExperienceSchema =
 |--------------------------------------------------------------------------
 | Update
 |--------------------------------------------------------------------------
-|
-| We cannot call .partial() on the refined
-| create schema in Zod v4.
-|
-| So we create the partial object first,
-| then apply the refinements.
-|
 */
 
 export const updateExperienceSchema =
