@@ -41,10 +41,7 @@ export async function uploadMedia(
 ): Promise<Media> {
   const formData = new FormData();
 
-  formData.append(
-    "file",
-    file
-  );
+  formData.append("file", file);
 
   const response =
     await apiClient.post<SingleMediaResponse>(

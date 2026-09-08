@@ -23,6 +23,8 @@ import SettingsAdmin from "../pages/admin/Settings";
 import MessagesAdmin from "../pages/admin/Messages";
 import MediaAdmin from "../pages/admin/Media";
 
+import EducationAdmin from "../pages/admin/Education";
+
 export const router =
   createBrowserRouter([
     {
@@ -78,6 +80,10 @@ export const router =
             {
               path: "/admin/experience",
               element: <ExperienceAdmin />
+            },
+            {
+              path: "/admin/education",
+              element: <EducationAdmin />
             },
             {
               path: "/admin/videos",

@@ -28,15 +28,31 @@ export const createSiteSettingsSchema =
     profileImage: z
       .string()
       .trim()
-      .url()
-      .or(z.literal(""))
+      .refine(
+        (value) =>
+          value === "" ||
+          value.startsWith("/") ||
+          /^https?:\/\/.+/.test(value),
+        {
+          message:
+            "Profile image must be a valid URL or uploaded media path"
+        }
+      )
       .default(""),
 
     resumeUrl: z
       .string()
       .trim()
-      .url()
-      .or(z.literal(""))
+      .refine(
+        (value) =>
+          value === "" ||
+          value.startsWith("/") ||
+          /^https?:\/\/.+/.test(value),
+        {
+          message:
+            "Resume must be a valid URL or uploaded media path"
+        }
+      )
       .default(""),
 
     email: z

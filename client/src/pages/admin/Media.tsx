@@ -4,6 +4,11 @@ import {
 } from "react";
 
 import {
+  getSettings,
+  saveSettings
+} from "../../api/settings.api";
+
+import {
   deleteMedia,
   getMedia,
   uploadMedia,
@@ -164,6 +169,91 @@ export default function Media() {
     }
   }
 
+  async function handleUseAsProfilePhoto(
+  item: Media
+) {
+  try {
+    setError("");
+    setSuccess("");
+
+    if (item.type !== "image") {
+      setError(
+        "Only images can be used as a profile photo."
+      );
+
+      return;
+    }
+
+    const settings =
+      await getSettings();
+
+    if (!settings) {
+      setError(
+        "Please save your Site Settings first."
+      );
+
+      return;
+    }
+
+    await saveSettings({
+      fullName:
+        settings.fullName,
+
+      professionalTitle:
+        settings.professionalTitle,
+
+      shortBio:
+        settings.shortBio,
+
+      about:
+        settings.about,
+
+      profileImage:
+        item.url,
+
+      resumeUrl:
+        settings.resumeUrl,
+
+      email:
+        settings.email,
+
+      phone:
+        settings.phone,
+
+      location:
+        settings.location,
+
+      githubUrl:
+        settings.githubUrl,
+
+      linkedinUrl:
+        settings.linkedinUrl,
+
+      twitterUrl:
+        settings.twitterUrl,
+
+      websiteUrl:
+        settings.websiteUrl,
+
+      availableForWork:
+        settings.availableForWork
+    });
+
+    setSuccess(
+      "Profile photo updated successfully."
+    );
+  } catch (error) {
+  console.error(
+    "Profile photo update error:",
+    error
+  );
+
+  setError(
+    "Failed to update profile photo. Check the browser console."
+  );
+}
+}
+
   return (
     <section className="admin-media">
 
@@ -296,7 +386,6 @@ export default function Media() {
                   </p>
 
                   <div className="admin-media-actions">
-
                     <a
                       href={fileUrl}
                       target="_blank"
@@ -305,6 +394,18 @@ export default function Media() {
                     >
                       View
                     </a>
+
+                    {item.type === "image" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleUseAsProfilePhoto(item)
+                        }
+                        className="admin-media-profile"
+                      >
+                        Use as Profile Photo
+                      </button>
+                    )}
 
                     <button
                       type="button"

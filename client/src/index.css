@@ -4134,6 +4134,33 @@ input {
   margin-top: 17px;
 }
 
+.admin-media-profile {
+  border: 1px solid #2563eb;
+  border-radius: 8px;
+
+  padding: 8px 12px;
+
+  background: #eff6ff;
+  color: #2563eb;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.admin-media-profile:hover {
+  background: #2563eb;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 .admin-media-view,
 .admin-media-delete {
   min-height: 34px;

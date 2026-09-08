@@ -20,6 +20,10 @@ const navigation = [
     path: "/admin/experience"
   },
   {
+    label: "Education",
+    path: "/admin/education"
+  },
+  {
     label: "Videos",
     path: "/admin/videos"
   },
