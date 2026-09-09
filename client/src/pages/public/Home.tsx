@@ -18,10 +18,6 @@ import {
   getSkills
 } from "../../api/skills.api";
 
-import {
-  getExperience
-} from "../../api/experience.api";
-
 const API_URL =
   import.meta.env.VITE_API_URL?.replace(
     /\/api\/?$/,
@@ -45,22 +41,6 @@ function getMediaUrl(
   return `${API_URL}${path}`;
 }
 
-function formatDate(
-  value?: string
-) {
-  if (!value) {
-    return "";
-  }
-
-  return new Intl.DateTimeFormat(
-    "en-US",
-    {
-      month: "short",
-      year: "numeric"
-    }
-  ).format(new Date(value));
-}
-
 export default function Home() {
   const settingsQuery =
     useQuery({
@@ -80,12 +60,6 @@ export default function Home() {
       queryFn: getSkills
     });
 
-  const experienceQuery =
-    useQuery({
-      queryKey: ["experience"],
-      queryFn: getExperience
-    });
-
   const settings =
     settingsQuery.data;
 
@@ -99,9 +73,6 @@ export default function Home() {
 
   const visibleSkills =
     skillsQuery.data?.slice(0, 8) ?? [];
-
-  const visibleExperience =
-    experienceQuery.data?.slice(0, 3) ?? [];
 
   return (
     <main className="home-page">
@@ -400,107 +371,6 @@ export default function Home() {
                     </p>
                   )}
                 </div>
-              )
-            )}
-
-          </div>
-        </section>
-      )}
-
-
-      {/* =====================================================
-          Experience
-      ===================================================== */}
-
-      {visibleExperience.length > 0 && (
-        <section className="home-section">
-
-          <div className="home-section-header">
-            <div>
-              <p className="home-section-eyebrow">
-                My journey
-              </p>
-
-              <h2>
-                Experience
-              </h2>
-
-              <p>
-                Where I've worked and what
-                I've been building.
-              </p>
-            </div>
-
-            <Link
-              to="/about"
-              className="home-section-link"
-            >
-              More about me →
-            </Link>
-          </div>
-
-          <div className="home-experience-list">
-
-            {visibleExperience.map(
-              (experience) => (
-                <article
-                  key={experience._id}
-                  className="home-experience-card"
-                >
-                  <div className="home-experience-date">
-                    <span>
-                      {formatDate(
-                        experience.startDate
-                      )}
-                    </span>
-
-                    <span>
-                      —
-                    </span>
-
-                    <span>
-                      {experience.current
-                        ? "Present"
-                        : formatDate(
-                            experience.endDate
-                          )}
-                    </span>
-                  </div>
-
-                  <div className="home-experience-content">
-                    <h3>
-                      {experience.position}
-                    </h3>
-
-                    <h4>
-                      {experience.company}
-                    </h4>
-
-                    {experience.location && (
-                      <p className="home-experience-location">
-                        {experience.location}
-                      </p>
-                    )}
-
-                    <p>
-                      {experience.description}
-                    </p>
-
-                    <div className="home-experience-technologies">
-                      {experience.technologies.map(
-                        (technology) => (
-                          <span
-                            key={
-                              technology
-                            }
-                          >
-                            {technology}
-                          </span>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </article>
               )
             )}
 

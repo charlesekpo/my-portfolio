@@ -2335,6 +2335,83 @@ input {
   text-transform: uppercase;
 }
 
+.about-education-list {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.about-education-item {
+  padding: 1.5rem;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+}
+
+.about-education-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 1.5rem;
+}
+
+.about-education-header h3 {
+  margin: 0;
+
+  font-size: 1.1rem;
+}
+
+.about-education-header h4 {
+  margin: 0.4rem 0 0;
+
+  font-size: 1rem;
+
+  font-weight: 600;
+}
+
+.about-education-header p {
+  margin: 0.4rem 0 0;
+
+  color: #64748b;
+}
+
+.about-education-header > span {
+  white-space: nowrap;
+
+  color: #64748b;
+
+  font-size: 0.9rem;
+}
+
+.about-education-location {
+  margin: 1rem 0 0;
+
+  color: #64748b;
+}
+
+.about-education-description {
+  margin: 0.75rem 0 0;
+
+  color: #475569;
+
+  line-height: 1.7;
+}
+
+@media (
+  max-width: 640px
+) {
+  .about-education-header {
+    flex-direction: column;
+
+    gap: 0.5rem;
+  }
+}
+
 
 /* ========================================
    About Intro
@@ -4619,4 +4696,623 @@ input {
   .message-delete-button {
     width: 100%;
   }
+}
+
+/* =====================================================
+   PUBLIC PORTFOLIO DARK PURPLE THEME
+===================================================== */
+
+:root {
+  --portfolio-bg: #1c1d25;
+  --portfolio-bg-soft: #22232d;
+  --portfolio-card: #282936;
+  --portfolio-card-hover: #30313f;
+
+  --portfolio-border: #3a3b4a;
+  --portfolio-border-soft: #30313e;
+
+  --portfolio-text: #f1f1f5;
+  --portfolio-text-soft: #c7c7d1;
+  --portfolio-muted: #9fa0b3;
+
+  --portfolio-primary: #9b7be0;
+  --portfolio-primary-light: #b8a7f0;
+  --portfolio-primary-dark: #7d5fc7;
+
+  --portfolio-green: #4ade80;
+}
+
+
+/* =====================================================
+   GLOBAL PUBLIC AREA
+===================================================== */
+
+.public-layout {
+  background: var(--portfolio-bg);
+  color: var(--portfolio-text);
+}
+
+.home-page,
+.about-page,
+.videos-page,
+.public-projects-page,
+.public-project-details-page {
+  color: var(--portfolio-text);
+}
+
+body:has(.public-layout) {
+  background: var(--portfolio-bg);
+  color: var(--portfolio-text);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.public-header {
+  border-bottom-color: var(--portfolio-border);
+  background:
+    rgba(28, 29, 37, 0.94);
+}
+
+.public-logo {
+  color: var(--portfolio-text);
+}
+
+.public-nav-link {
+  color: var(--portfolio-muted);
+}
+
+.public-nav-link:hover,
+.public-nav-link.active {
+  color: var(--portfolio-primary-light);
+}
+
+.public-nav-link.active::after {
+  background: var(--portfolio-primary);
+}
+
+.public-header-button {
+  background: var(--portfolio-primary);
+  color: #ffffff;
+}
+
+.public-header-button:hover {
+  background: var(--portfolio-primary-dark);
+}
+
+
+/* =====================================================
+   HOME HERO
+===================================================== */
+
+.home-eyebrow,
+.home-section-eyebrow {
+  color: var(--portfolio-primary-light);
+}
+
+.home-hero h1 {
+  color: var(--portfolio-text);
+}
+
+.home-hero h2 {
+  color: var(--portfolio-primary-light);
+}
+
+.home-hero-bio {
+  color: var(--portfolio-text-soft);
+}
+
+.home-social-links a {
+  color: var(--portfolio-muted);
+}
+
+.home-social-links a:hover {
+  color: var(--portfolio-primary-light);
+}
+
+.home-button-primary {
+  background: var(--portfolio-primary);
+  color: #ffffff;
+}
+
+.home-button-primary:hover {
+  background: var(--portfolio-primary-dark);
+}
+
+.home-button-secondary {
+  border-color: var(--portfolio-border);
+  background: transparent;
+  color: var(--portfolio-text-soft);
+}
+
+.home-button-secondary:hover {
+  background: var(--portfolio-bg-soft);
+  border-color: var(--portfolio-primary);
+}
+
+
+/* =====================================================
+   PROFILE IMAGE
+===================================================== */
+
+.home-profile-image {
+  border-color: var(--portfolio-border);
+  background: var(--portfolio-card);
+}
+
+.home-profile-placeholder {
+  background: var(--portfolio-card);
+  color: var(--portfolio-primary-light);
+}
+
+
+/* =====================================================
+   SECTION HEADINGS
+===================================================== */
+
+.home-section-header h2,
+.about-section-heading h2,
+.videos-section-heading h2 {
+  color: var(--portfolio-text);
+}
+
+.home-section-header > div > p:last-child,
+.about-section-heading > p:last-child {
+  color: var(--portfolio-text-soft);
+}
+
+.home-section-link {
+  color: var(--portfolio-primary-light);
+}
+
+
+/* =====================================================
+   PROJECT CARDS
+===================================================== */
+
+.home-project-card,
+.public-project-card,
+.public-project-details,
+.video-card {
+  background: var(--portfolio-card);
+  border-color: var(--portfolio-border);
+}
+
+.home-project-placeholder,
+.public-project-image-placeholder,
+.video-thumbnail {
+  background: var(--portfolio-bg-soft);
+  color: var(--portfolio-muted);
+}
+
+.home-project-heading h3,
+.public-project-title-row h2,
+.public-project-details-header h1,
+.video-card-content h3 {
+  color: var(--portfolio-text);
+}
+
+.home-project-content > p,
+.public-project-description,
+.public-project-details-short-description,
+.video-card-content p {
+  color: var(--portfolio-text-soft);
+}
+
+.home-project-technologies span,
+.public-project-technologies span,
+.about-experience-technologies span {
+  background: var(--portfolio-bg-soft);
+  color: var(--portfolio-text-soft);
+}
+
+.home-project-link,
+.video-watch-link {
+  color: var(--portfolio-primary-light);
+}
+
+.home-project-heading span,
+.public-project-badge,
+.video-featured-badge {
+  background: rgba(155, 123, 224, 0.18);
+  color: var(--portfolio-primary-light);
+}
+
+
+/* =====================================================
+   SKILLS
+===================================================== */
+
+.home-skills-section,
+.about-section {
+  border-color: var(--portfolio-border);
+}
+
+.home-skill-card,
+.about-skill-group {
+  background: var(--portfolio-card);
+  border-color: var(--portfolio-border);
+}
+
+.home-skill-top h3,
+.about-skill-group h3 {
+  color: var(--portfolio-text);
+}
+
+.home-skill-top span,
+.home-skill-top strong,
+.about-skill-header > span,
+.about-skill p {
+  color: var(--portfolio-muted);
+}
+
+.home-skill-bar,
+.about-skill-bar {
+  background: var(--portfolio-bg-soft);
+}
+
+.home-skill-bar span,
+.about-skill-bar span {
+  background: var(--portfolio-primary);
+}
+
+.about-skill {
+  border-color: var(--portfolio-border-soft);
+}
+
+
+/* =====================================================
+   ABOUT PAGE
+===================================================== */
+
+.about-eyebrow,
+.videos-eyebrow,
+.public-section-eyebrow {
+  color: var(--portfolio-primary-light);
+}
+
+.about-intro h1,
+.videos-header h1 {
+  color: var(--portfolio-text);
+}
+
+.about-intro h2 {
+  color: var(--portfolio-primary-light);
+}
+
+.about-short-bio,
+.about-story-text p {
+  color: var(--portfolio-text-soft);
+}
+
+.about-profile-image {
+  border-color: var(--portfolio-border);
+}
+
+.about-details {
+  background: var(--portfolio-bg-soft);
+  border-color: var(--portfolio-border);
+}
+
+.about-detail span {
+  color: var(--portfolio-muted);
+}
+
+.about-detail strong,
+.about-detail a {
+  color: var(--portfolio-text);
+}
+
+.about-detail a:hover {
+  color: var(--portfolio-primary-light);
+}
+
+.about-resume-button {
+  background: var(--portfolio-primary);
+  color: #ffffff;
+}
+
+.about-resume-button:hover {
+  background: var(--portfolio-primary-dark);
+}
+
+.about-education-item {
+  background: var(--portfolio-card);
+  border-color: var(--portfolio-border);
+}
+
+.about-education-header p,
+.about-education-header > span,
+.about-education-location {
+  color: var(--portfolio-muted);
+}
+
+.about-education-description {
+  color: var(--portfolio-text-soft);
+}
+
+.about-experience-item {
+  border-color: var(--portfolio-border);
+}
+
+.about-experience-period,
+.about-experience-description,
+.about-experience-location {
+  color: var(--portfolio-muted);
+}
+
+.about-experience-heading h3 {
+  color: var(--portfolio-text);
+}
+
+.about-experience-heading h4 {
+  color: var(--portfolio-primary-light);
+}
+
+.about-current-badge {
+  background: rgba(74, 222, 128, 0.12);
+  color: var(--portfolio-green);
+}
+
+
+/* =====================================================
+   CTA SECTIONS
+===================================================== */
+
+.home-cta,
+.about-cta {
+  background:
+    linear-gradient(
+      135deg,
+      #262633,
+      #1d1e26
+    );
+
+  border: 1px solid var(--portfolio-border);
+}
+
+.home-cta .home-section-eyebrow,
+.about-cta .about-eyebrow {
+  color: var(--portfolio-primary-light);
+}
+
+.home-cta h2,
+.about-cta h2 {
+  color: var(--portfolio-text);
+}
+
+.home-cta p:last-child,
+.about-cta p:last-child {
+  color: var(--portfolio-text-soft);
+}
+
+.home-cta .home-button-primary,
+.about-cta-button {
+  background: var(--portfolio-primary);
+  color: #ffffff;
+}
+
+.home-cta .home-button-primary:hover,
+.about-cta-button:hover {
+  background: var(--portfolio-primary-dark);
+}
+
+
+/* =====================================================
+   PROJECT DETAILS
+===================================================== */
+
+.public-project-details-body section h2 {
+  color: var(--portfolio-text);
+}
+
+.public-project-details-body section p {
+  color: var(--portfolio-text-soft);
+}
+
+.public-project-gallery img {
+  border-color: var(--portfolio-border);
+}
+
+.public-project-back-link,
+.public-project-back {
+  color: var(--portfolio-muted);
+}
+
+.public-project-back-link:hover,
+.public-project-back:hover {
+  color: var(--portfolio-primary-light);
+}
+
+
+/* =====================================================
+   VIDEOS
+===================================================== */
+
+.videos-header > p:last-child,
+.videos-section-heading p {
+  color: var(--portfolio-text-soft);
+}
+
+.video-platform,
+.home-video-platform {
+  color: var(--portfolio-primary-light);
+}
+
+.video-play-button,
+.home-video-play {
+  background: var(--portfolio-primary);
+  color: #ffffff;
+}
+
+
+/* =====================================================
+   CONTACT PAGE
+===================================================== */
+
+.public-contact {
+  background: var(--portfolio-bg);
+}
+
+.public-contact-intro h1 {
+  color: var(--portfolio-text);
+}
+
+.public-contact-intro > p {
+  color: var(--portfolio-text-soft);
+}
+
+.public-contact-info > div {
+  border-color: var(--portfolio-border);
+}
+
+.public-contact-info span {
+  color: var(--portfolio-muted);
+}
+
+.public-contact-info a,
+.public-contact-info p {
+  color: var(--portfolio-text-soft);
+}
+
+.public-contact-info a:hover {
+  color: var(--portfolio-primary-light);
+}
+
+.public-contact-card {
+  background: var(--portfolio-card);
+  border-color: var(--portfolio-border);
+  box-shadow:
+    0 12px 35px
+    rgba(0, 0, 0, 0.2);
+}
+
+.public-contact-field label {
+  color: var(--portfolio-text-soft);
+}
+
+.public-contact-field input,
+.public-contact-field textarea {
+  background: var(--portfolio-bg-soft);
+  border-color: var(--portfolio-border);
+  color: var(--portfolio-text);
+}
+
+.public-contact-field input::placeholder,
+.public-contact-field textarea::placeholder {
+  color: var(--portfolio-muted);
+}
+
+.public-contact-field input:focus,
+.public-contact-field textarea:focus {
+  border-color: var(--portfolio-primary);
+  background: var(--portfolio-bg-soft);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(155, 123, 224, 0.15);
+}
+
+.public-contact-submit {
+  background: var(--portfolio-primary);
+}
+
+.public-contact-submit:hover:not(:disabled) {
+  background: var(--portfolio-primary-dark);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.public-footer {
+  border-color: var(--portfolio-border);
+  background: var(--portfolio-bg-soft);
+}
+
+.public-footer-logo {
+  color: var(--portfolio-text);
+}
+
+.public-footer-main p,
+.public-footer-links a,
+.public-footer-socials a,
+.public-footer-bottom,
+.public-footer-bottom a {
+  color: var(--portfolio-muted);
+}
+
+.public-footer-links a:hover,
+.public-footer-socials a:hover,
+.public-footer-bottom a:hover {
+  color: var(--portfolio-primary-light);
+}
+
+.public-footer-bottom {
+  border-color: var(--portfolio-border);
+}
+
+/* =====================================================
+   FINAL SPACING + TEXT VISIBILITY FIXES
+===================================================== */
+
+/* Reduce excessive space between Home sections */
+.home-section {
+  padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+/* Reduce large empty space before the footer */
+.home-cta {
+  margin-bottom: 0;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+/* Make the Skills section more compact */
+.home-skills-section {
+  padding-bottom: 64px;
+}
+
+/* =====================================================
+   ABOUT PAGE SKILLS - IMPROVE TEXT VISIBILITY
+===================================================== */
+
+.about-skill {
+  color: #e5e7eb;
+}
+
+.about-skill h3 {
+  color: #f8fafc;
+  opacity: 1;
+}
+
+.about-skill p {
+  color: #cbd5e1;
+  opacity: 1;
+}
+
+.about-skill-header h3 {
+  color: #f8fafc;
+  opacity: 1;
+}
+
+/* Skill category/label text */
+.about-skill span {
+  color: #cbd5e1;
+  opacity: 1;
+}
+
+/* Skill percentages */
+.about-skill strong {
+  color: #c4b5fd;
+  opacity: 1;
+}
+
+/* Remove the large gap before the footer */
+.public-footer {
+  margin-top: 0;
 }

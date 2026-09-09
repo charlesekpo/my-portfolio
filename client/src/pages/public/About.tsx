@@ -18,27 +18,22 @@ import {
   getExperience
 } from "../../api/experience.api";
 
-const API_URL =
-  import.meta.env.VITE_API_URL?.replace(
-    /\/api\/?$/,
-    ""
-  ) ?? "";
+import {
+  getEducation
+} from "../../api/education.api";
 
-function getMediaUrl(
-  path?: string
-) {
-  if (!path) {
-    return "";
+function getMediaUrl(url: string) {
+  if (url.startsWith("http")) {
+    return url;
   }
 
-  if (
-    path.startsWith("http://") ||
-    path.startsWith("https://")
-  ) {
-    return path;
-  }
+  const apiUrl =
+    import.meta.env.VITE_API_URL;
 
-  return `${API_URL}${path}`;
+  const serverUrl =
+    apiUrl.replace("/api", "");
+
+  return `${serverUrl}${url}`;
 }
 
 function formatDate(
@@ -88,6 +83,12 @@ export default function About() {
       queryFn: getExperience
     });
 
+  const educationQuery =
+  useQuery({
+    queryKey: ["education"],
+    queryFn: getEducation
+  });
+
   const settings =
     settingsQuery.data;
 
@@ -96,6 +97,9 @@ export default function About() {
 
   const experience =
     experienceQuery.data ?? [];
+  
+  const education =
+  educationQuery.data ?? [];
 
   const skillGroups =
     Object.entries(
@@ -124,7 +128,8 @@ export default function About() {
   const isLoading =
     settingsQuery.isLoading ||
     skillsQuery.isLoading ||
-    experienceQuery.isLoading;
+    experienceQuery.isLoading ||
+    educationQuery.isLoading;
 
   if (isLoading) {
     return (
@@ -288,12 +293,13 @@ export default function About() {
 
             {settings?.resumeUrl && (
               <a
-                href={settings.resumeUrl}
-                target="_blank"
-                rel="noreferrer"
+                href={getMediaUrl(
+                  settings.resumeUrl
+                )}
+                download
                 className="about-resume-button"
               >
-                View Resume →
+                Download CV ↓
               </a>
             )}
 
@@ -511,6 +517,96 @@ export default function About() {
                     )}
 
                   </div>
+
+                </article>
+              )
+            )}
+
+          </div>
+
+        </section>
+      )}
+
+      {/* ==========================================
+          Education
+      ========================================== */}
+
+      {education.length > 0 && (
+        <section className="about-section">
+
+          <div className="about-section-heading">
+            <p className="about-eyebrow">
+              Education
+            </p>
+
+            <h2>
+              Academic Background
+            </h2>
+
+            <p>
+              My educational background and
+              academic qualifications.
+            </p>
+          </div>
+
+          <div className="about-education-list">
+
+            {education.map(
+              (item) => (
+                <article
+                  key={item._id}
+                  className="about-education-item"
+                >
+
+                  <div className="about-education-header">
+
+                    <div>
+                      <h3>
+                        {item.institution}
+                      </h3>
+
+                      <h4>
+                        {item.qualification}
+                      </h4>
+
+                      {item.fieldOfStudy && (
+                        <p>
+                          {item.fieldOfStudy}
+                        </p>
+                      )}
+                    </div>
+
+                    <span>
+                      {item.startDate &&
+                        formatDate(
+                          item.startDate
+                        )}
+
+                      {item.startDate &&
+                        " – "}
+
+                      {item.current
+                        ? "Present"
+                        : item.endDate
+                          ? formatDate(
+                              item.endDate
+                            )
+                          : ""}
+                    </span>
+
+                  </div>
+
+                  {item.location && (
+                    <p className="about-education-location">
+                      {item.location}
+                    </p>
+                  )}
+
+                  {item.description && (
+                    <p className="about-education-description">
+                      {item.description}
+                    </p>
+                  )}
 
                 </article>
               )
