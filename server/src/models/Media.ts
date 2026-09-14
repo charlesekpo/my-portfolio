@@ -5,6 +5,7 @@ import mongoose, {
 
 export type MediaType =
   | "image"
+  | "video"
   | "document";
 
 export interface IMedia
@@ -14,6 +15,7 @@ export interface IMedia
   mimeType: string;
   size: number;
   url: string;
+  publicId: string;
   type: MediaType;
 
   createdAt: Date;
@@ -52,10 +54,17 @@ const mediaSchema =
         trim: true
       },
 
+      publicId: {
+        type: String,
+        required: true,
+        trim: true
+      },
+
       type: {
         type: String,
         enum: [
           "image",
+          "video",
           "document"
         ],
         required: true

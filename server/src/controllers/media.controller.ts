@@ -18,6 +18,9 @@ export const upload =
       req: Request,
       res: Response
     ) => {
+      console.log("File upload request received");
+      console.log("File:", req.file);
+
       if (!req.file) {
         res.status(400).json({
           success: false,
@@ -33,10 +36,47 @@ export const upload =
           req.file
         );
 
+      console.log("File upload successful:", media);
+
       res.status(201).json({
         success: true,
         message:
           "File uploaded successfully",
+        data: media
+      });
+    }
+  );
+
+export const uploadVideo =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      console.log("Video upload request received");
+      console.log("File:", req.file);
+
+      if (!req.file) {
+        res.status(400).json({
+          success: false,
+          message:
+            "No video uploaded"
+        });
+
+        return;
+      }
+
+      const media =
+        await createMedia(
+          req.file
+        );
+
+      console.log("Video upload successful:", media);
+
+      res.status(201).json({
+        success: true,
+        message:
+          "Video uploaded successfully",
         data: media
       });
     }

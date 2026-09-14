@@ -2,6 +2,7 @@ import apiClient from "./client";
 
 export type MediaType =
   | "image"
+  | "video"
   | "document";
 
 export interface Media {
@@ -12,6 +13,7 @@ export interface Media {
   size: number;
   url: string;
   type: MediaType;
+  publicId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -46,6 +48,22 @@ export async function uploadMedia(
   const response =
     await apiClient.post<SingleMediaResponse>(
       "/media",
+      formData
+    );
+
+  return response.data.data;
+}
+
+export async function uploadVideo(
+  file: File
+): Promise<Media> {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  const response =
+    await apiClient.post<SingleMediaResponse>(
+      "/media/video",
       formData
     );
 

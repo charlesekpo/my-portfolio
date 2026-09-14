@@ -1,8 +1,10 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-
 import { Media } from "../models/Media.js";
 import { AppError } from "../utils/AppError.js";
+import {
+  uploadImage,
+  uploadVideo,
+  deleteFile
+} from "../utils/cloudinary.js";
 
 import type { MediaType } from "../models/Media.js";
 
@@ -16,30 +18,47 @@ export async function createMedia(
     );
   }
 
-  const type: MediaType =
-    file.mimetype.startsWith("image/")
-      ? "image"
-      : "document";
+  console.log("Creating media record for:", file.originalname, file.mimetype);
 
-  const directory =
-    type === "image"
-      ? "images"
-      : "documents";
+  let type: MediaType;
+  let uploadResult: {
+    url: string;
+    publicId: string;
+    resourceType: "image" | "video";
+  };
 
-  const url =
-    `/uploads/${directory}/${file.filename}`;
+  try {
+    if (file.mimetype.startsWith("image/")) {
+      type = "image";
+      uploadResult = await uploadImage(file);
+    } else if (file.mimetype.startsWith("video/")) {
+      type = "video";
+      uploadResult = await uploadVideo(file);
+    } else {
+      type = "document" as MediaType;
+      uploadResult = await uploadImage(file);
+    }
 
-  const media =
-    await Media.create({
-      filename: file.filename,
-      originalName: file.originalname,
-      mimeType: file.mimetype,
-      size: file.size,
-      url,
-      type
-    });
+    console.log("Upload result:", uploadResult);
 
-  return media;
+    const media =
+      await Media.create({
+        filename: file.originalname,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        url: uploadResult.url,
+        type,
+        publicId: uploadResult.publicId
+      });
+
+    console.log("Media record created:", media);
+
+    return media;
+  } catch (error: any) {
+    console.error("Error creating media:", error);
+    throw error;
+  }
 }
 
 export async function getMedia() {
@@ -79,34 +98,16 @@ export async function deleteMedia(
 
   /*
   |--------------------------------------------------------------------------
-  | Delete physical file
+  | Delete from Cloudinary
   |--------------------------------------------------------------------------
   */
 
-  const filePath =
-    path.resolve(
-      media.type === "image"
-        ? "uploads/images"
-        : "uploads/documents",
-      media.filename
-    );
-
-  try {
-    await fs.unlink(filePath);
-  } catch (error: unknown) {
-    /*
-     * If the file doesn't exist, we can
-     * still remove the database record.
-     */
-    if (
-      !(
-        error &&
-        typeof error === "object" &&
-        "code" in error &&
-        error.code === "ENOENT"
-      )
-    ) {
-      throw error;
+  const mediaData = media as any;
+  if (mediaData.publicId) {
+    try {
+      await deleteFile(mediaData.publicId);
+    } catch (error) {
+      console.error("Failed to delete from Cloudinary:", error);
     }
   }
 

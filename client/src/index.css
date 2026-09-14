@@ -5316,3 +5316,89 @@ body:has(.public-layout) {
 .public-footer {
   margin-top: 0;
 }
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.lightbox-nav-prev {
+  left: -75px;
+}
+
+.lightbox-nav-next {
+  right: -75px;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #111827;
+
+  transform: translateY(-50%) scale(1.08);
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-close {
+  position: absolute;
+
+  top: -55px;
+  right: -10px;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.lightbox-close:hover {
+  background: rgba(220, 38, 38, 0.9);
+  transform: scale(1.08);
+}

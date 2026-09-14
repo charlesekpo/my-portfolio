@@ -87,6 +87,12 @@ app.use(
   })
 );
 
+// Increase timeout for media uploads
+app.use("/api/media", (req, res, next) => {
+  res.setTimeout(10 * 60 * 1000); // 10 minutes
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 
 app.use(

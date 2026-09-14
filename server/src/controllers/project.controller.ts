@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import {
   createProject,
   deleteProject,
+  getProjectById,
   getProjectBySlug,
   getProjects,
   getPublishedProjects,
@@ -97,6 +98,31 @@ export const publicList =
       res.json({
         success: true,
         data: projects
+      });
+    }
+  );
+
+export const getById =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const id = req.params.id;
+
+      if (typeof id !== "string") {
+        throw new AppError(
+          "Project ID is required",
+          400
+        );
+      }
+
+      const project =
+        await getProjectById(id);
+
+      res.json({
+        success: true,
+        data: project
       });
     }
   );

@@ -5,6 +5,7 @@ import {
   list,
   publicList,
   getBySlug,
+  getById,
   update,
   remove
 } from "../controllers/project.controller.js";
@@ -46,6 +47,12 @@ router.get(
   "/",
   requireAuth,
   list
+);
+
+router.get(
+  "/:id",
+  requireAuth,
+  getById
 );
 
 router.post(

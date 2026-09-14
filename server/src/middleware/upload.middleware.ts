@@ -1,44 +1,22 @@
 import multer from "multer";
-import path from "node:path";
-import crypto from "node:crypto";
 
-const storage = multer.diskStorage({
-  destination: (_req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
-      cb(null, "uploads/images");
-      return;
-    }
-
-    if (file.mimetype === "application/pdf") {
-      cb(null, "uploads/documents");
-      return;
-    }
-
-    cb(
-      new Error("Unsupported file type"),
-      ""
-    );
-  },
-
-  filename: (_req, file, cb) => {
-    const extension =
-      path.extname(
-        file.originalname
-      ).toLowerCase();
-
-    const filename =
-      `${Date.now()}-${crypto.randomUUID()}${extension}`;
-
-    cb(null, filename);
-  }
-});
+const storage = multer.memoryStorage();
 
 const fileFilter: multer.Options["fileFilter"] =
   (_req, file, cb) => {
+    console.log("File filter check:", file.mimetype, file.originalname);
+
     const allowedImageTypes = [
       "image/jpeg",
       "image/png",
       "image/webp"
+    ];
+
+    const allowedVideoTypes = [
+      "video/mp4",
+      "video/quicktime",
+      "video/x-msvideo",
+      "video/webm"
     ];
 
     const allowedDocumentTypes = [
@@ -50,6 +28,17 @@ const fileFilter: multer.Options["fileFilter"] =
         file.mimetype
       )
     ) {
+      console.log("Image file accepted");
+      cb(null, true);
+      return;
+    }
+
+    if (
+      allowedVideoTypes.includes(
+        file.mimetype
+      )
+    ) {
+      console.log("Video file accepted");
       cb(null, true);
       return;
     }
@@ -59,13 +48,15 @@ const fileFilter: multer.Options["fileFilter"] =
         file.mimetype
       )
     ) {
+      console.log("Document file accepted");
       cb(null, true);
       return;
     }
 
+    console.log("File rejected - unsupported type");
     cb(
       new Error(
-        "Only JPEG, PNG, WebP images and PDF documents are allowed"
+        "Only JPEG, PNG, WebP images, MP4/MOV/AVI/WebM videos, and PDF documents are allowed"
       )
     );
   };
@@ -75,6 +66,7 @@ export const upload = multer({
   fileFilter,
 
   limits: {
-    fileSize: 10 * 1024 * 1024
+    fileSize: 100 * 1024 * 1024, // 100MB for videos
+    fieldSize: 100 * 1024 * 1024
   }
 });

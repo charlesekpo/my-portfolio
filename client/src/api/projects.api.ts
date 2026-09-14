@@ -93,7 +93,7 @@ export async function updateProject(
   data: UpdateProjectData
 ) {
   const response =
-    await apiClient.patch<ProjectResponse>(
+    await apiClient.put<ProjectResponse>(
       `/projects/${id}`,
       data
     );
@@ -110,6 +110,17 @@ export async function deleteProject(
 }
 
 export async function getPublicProjectBySlug(
+  slug: string
+) {
+  const response =
+    await apiClient.get<ProjectResponse>(
+      `/projects/slug/${slug}`
+    );
+
+  return response.data.data;
+}
+
+export async function getProjectBySlug(
   slug: string
 ) {
   const response =

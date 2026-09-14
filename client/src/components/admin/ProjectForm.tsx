@@ -1,20 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   createProject,
+  updateProject,
+  getProject,
   type CreateProjectData
 } from "../../api/projects.api";
 
-import { uploadMedia } from "../../api/media.api";
+import { uploadMedia, uploadVideo } from "../../api/media.api";
 
 interface ProjectFormProps {
   onSuccess: () => void;
   onCancel: () => void;
+  editingProjectId?: string | null;
 }
 
 export default function ProjectForm({
   onSuccess,
-  onCancel
+  onCancel,
+  editingProjectId
 }: ProjectFormProps) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -66,6 +70,46 @@ export default function ProjectForm({
   const [uploadingImages, setUploadingImages] =
     useState(false);
 
+  const [uploadingVideo, setUploadingVideo] =
+    useState(false);
+
+  function getMediaUrl(path: string) {
+    if (!path) return "";
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+      return path;
+    }
+    return `${import.meta.env.VITE_API_URL.replace("/api", "")}${path}`;
+  }
+
+  useEffect(() => {
+    async function loadProject() {
+      if (editingProjectId) {
+        try {
+          const project = await getProject(editingProjectId);
+          setTitle(project.title);
+          setSlug(project.slug);
+          setSlugManuallyEdited(true);
+          setShortDescription(project.shortDescription);
+          setDescription(project.description);
+          setTechnologies(project.technologies.join(", "));
+          setThumbnail(project.thumbnail);
+          setImages(project.images);
+          setLiveUrl(project.liveUrl || "");
+          setGithubUrl(project.githubUrl || "");
+          setVideoUrl(project.videoUrl || "");
+          setFeatured(project.featured);
+          setPublished(project.published);
+          setSortOrder(project.sortOrder.toString());
+        } catch (error) {
+          console.error("Failed to load project:", error);
+          setError("Failed to load project for editing");
+        }
+      }
+    }
+
+    loadProject();
+  }, [editingProjectId]);
+
   function generateSlug(value: string) {
     return value
       .toLowerCase()
@@ -78,7 +122,8 @@ export default function ProjectForm({
   function handleTitleChange(value: string) {
     setTitle(value);
 
-    if (!slugManuallyEdited) {
+    // Auto-generate slug for new projects or when slug hasn't been manually edited
+    if (!editingProjectId || !slugManuallyEdited) {
       setSlug(generateSlug(value));
     }
   }
@@ -143,6 +188,39 @@ export default function ProjectForm({
       );
     } finally {
       setUploadingImages(false);
+
+      event.target.value = "";
+    }
+  }
+
+  async function handleVideoUpload(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    console.log("Starting video upload:", file.name, file.size, file.type);
+
+    try {
+      setUploadingVideo(true);
+      setError("");
+
+      const media = await uploadVideo(file);
+
+      console.log("Video upload successful:", media);
+
+      setVideoUrl(media.url);
+    } catch (error: any) {
+      console.error("Video upload error:", error);
+
+      const errorMessage = error.response?.data?.message ||
+                          error.message ||
+                          "Failed to upload video.";
+
+      setError(errorMessage);
+    } finally {
+      setUploadingVideo(false);
 
       event.target.value = "";
     }
@@ -214,17 +292,21 @@ export default function ProjectForm({
           : {})
       };
 
-      await createProject(data);
+      if (editingProjectId) {
+        await updateProject(editingProjectId, data);
+      } else {
+        await createProject(data);
+      }
 
       onSuccess();
     } catch (err) {
       console.error(
-        "Failed to create project:",
+        `Failed to ${editingProjectId ? "update" : "create"} project:`,
         err
       );
 
       setError(
-        "Failed to create project. Please check your information and try again."
+        `Failed to ${editingProjectId ? "update" : "create"} project. Please check your information and try again.`
       );
     } finally {
       setIsSubmitting(false);
@@ -248,12 +330,13 @@ export default function ProjectForm({
         <div>
 
           <h2>
-            Add Project
+            {editingProjectId ? "Edit Project" : "Add Project"}
           </h2>
 
           <p>
-            Add a new project to your
-            portfolio.
+            {editingProjectId
+              ? "Edit an existing project in your portfolio."
+              : "Add a new project to your portfolio."}
           </p>
 
         </div>
@@ -458,10 +541,7 @@ export default function ProjectForm({
               >
 
                 <img
-                  src={`${
-                    import.meta.env.VITE_API_URL
-                      .replace("/api", "")
-                  }${thumbnail}`}
+                  src={getMediaUrl(thumbnail)}
                   alt="Project thumbnail preview"
                   style={{
                     width: "240px",
@@ -530,14 +610,7 @@ export default function ProjectForm({
                     >
 
                       <img
-                        src={`${
-                          import.meta.env
-                            .VITE_API_URL
-                            .replace(
-                              "/api",
-                              ""
-                            )
-                        }${imageUrl}`}
+                        src={getMediaUrl(imageUrl)}
                         alt={`Project image ${
                           index + 1
                         }`}
@@ -645,6 +718,49 @@ export default function ProjectForm({
               placeholder="https://youtube.com/..."
             />
 
+            <div style={{ marginTop: "8px" }}>
+              <small>Or upload a video file:</small>
+              <input
+                id="videoFile"
+                type="file"
+                accept="video/*"
+                onChange={handleVideoUpload}
+                disabled={
+                  uploadingVideo ||
+                  isSubmitting
+                }
+                style={{ marginTop: "4px" }}
+              />
+
+              {uploadingVideo && (
+                <p style={{ marginTop: "4px" }}>
+                  Uploading video...
+                </p>
+              )}
+
+              {videoUrl && (
+                <div style={{ marginTop: "12px" }}>
+                  <p>Video Preview:</p>
+                  <video
+                    controls
+                    width="100%"
+                    height="auto"
+                    style={{
+                      maxWidth: "400px",
+                      borderRadius: "8px",
+                      marginTop: "8px"
+                    }}
+                  >
+                    <source
+                      src={getMediaUrl(videoUrl)}
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )}
+            </div>
+
           </div>
 
         </div>
@@ -741,7 +857,8 @@ export default function ProjectForm({
             disabled={
               isSubmitting ||
               uploadingThumbnail ||
-              uploadingImages
+              uploadingImages ||
+              uploadingVideo
             }
             className="primary-button"
           >

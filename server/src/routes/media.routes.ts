@@ -4,7 +4,8 @@ import {
   getAll,
   getOne,
   remove,
-  upload
+  upload,
+  uploadVideo
 } from "../controllers/media.controller.js";
 
 import { requireAuth } from "../middleware/auth.middleware.js";
@@ -24,6 +25,13 @@ router.post(
   requireAuth,
   uploadMiddleware.single("file"),
   upload
+);
+
+router.post(
+  "/video",
+  requireAuth,
+  uploadMiddleware.single("file"),
+  uploadVideo
 );
 
 router.get(

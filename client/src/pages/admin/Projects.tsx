@@ -1,10 +1,12 @@
 import {
   useQuery,
-  useQueryClient
+  useQueryClient,
+  useMutation
 } from "@tanstack/react-query";
 
 import {
-  getProjects
+  getProjects,
+  deleteProject
 } from "../../api/projects.api";
 
 import ProjectForm from "../../components/admin/ProjectForm";
@@ -16,6 +18,9 @@ import { getMediaUrl } from "../../utils/mediaUrl";
 export default function Projects() {
   const [showForm, setShowForm] =
     useState(false);
+
+  const [editingProject, setEditingProject] =
+    useState<string | null>(null);
 
   const queryClient =
     useQueryClient();
@@ -30,12 +35,38 @@ export default function Projects() {
     queryFn: getProjects
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteProject,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["projects"]
+      });
+    }
+  });
+
   async function handleProjectCreated() {
     await queryClient.invalidateQueries({
       queryKey: ["projects"]
     });
 
     setShowForm(false);
+    setEditingProject(null);
+  }
+
+  function handleEdit(projectId: string) {
+    setEditingProject(projectId);
+    setShowForm(true);
+  }
+
+  function handleDelete(projectId: string) {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      deleteMutation.mutate(projectId);
+    }
+  }
+
+  function handleCancel() {
+    setShowForm(false);
+    setEditingProject(null);
   }
 
   if (isLoading) {
@@ -68,9 +99,8 @@ export default function Projects() {
           onSuccess={
             handleProjectCreated
           }
-          onCancel={() =>
-            setShowForm(false)
-          }
+          onCancel={handleCancel}
+          editingProjectId={editingProject}
         />
       </section>
     );
@@ -157,12 +187,17 @@ export default function Projects() {
                 <div className="project-admin-actions">
                   <button
                     type="button"
+                    onClick={() => handleEdit(project._id)}
+                    disabled={deleteMutation.isPending}
                   >
                     Edit
                   </button>
 
                   <button
                     type="button"
+                    onClick={() => handleDelete(project._id)}
+                    disabled={deleteMutation.isPending}
+                    className="danger-button"
                   >
                     Delete
                   </button>

@@ -17,6 +17,13 @@ function getMediaUrl(
     return "";
   }
 
+  // If it's already a full URL (Cloudinary), use it directly
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
+  // Otherwise, prepend the API URL for local files
+
   const apiUrl =
     import.meta.env.VITE_API_URL;
 
