@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import compression from "compression";
-import {rateLimit} from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import projectRoutes from "./routes/project.routes.js";
@@ -15,16 +15,13 @@ import path from "node:path";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import educationRoutes from "./routes/education.routes.js";
 import { connectDatabase } from "./config/db.js";
-
 import { env } from "./config/env.js";
 
 const app = express();
 
 app.use(
   "/uploads",
-  express.static(
-    path.resolve("uploads")
-  )
+  express.static(path.resolve("uploads"))
 );
 
 app.set("trust proxy", 1);
@@ -64,13 +61,6 @@ app.use(
 
 /*
 |--------------------------------------------------------------------------
-| Logging
-|--------------------------------------------------------------------------
-*/
-
-
-/*
-|--------------------------------------------------------------------------
 | Rate limiting
 |--------------------------------------------------------------------------
 */
@@ -83,59 +73,6 @@ app.use(
     standardHeaders: "draft-8",
     legacyHeaders: false
   })
-);
-
-// Increase timeout for media uploads
-app.use("/api/media", (req, res, next) => {
-  res.setTimeout(10 * 60 * 1000); // 10 minutes
-  next();
-});
-
-app.use("/api/auth", authRoutes);
-
-app.use(
-  "/api/projects",
-  projectRoutes
-);
-
-app.use(
-  "/api/skills",
-  skillRoutes
-);
-
-app.use(
-  "/api/experience",
-  experienceRoutes
-);
-
-app.use(
-  "/api/education",
-  educationRoutes
-);
-
-app.use(
-  "/api/videos",
-  videoRoutes
-);
-
-app.use(
-  "/api/settings",
-  siteSettingsRoutes
-);
-
-app.use(
-  "/api/messages",
-  messageRoutes
-);
-
-app.use(
-  "/api/media",
-  mediaRoutes
-);
-
-app.use(
-  "/api/dashboard",
-  dashboardRoutes
 );
 
 /*
@@ -151,6 +88,12 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
+/*
+|--------------------------------------------------------------------------
+| Database connection
+|--------------------------------------------------------------------------
+*/
+
 app.use("/api", async (_req, _res, next) => {
   try {
     await connectDatabase();
@@ -159,6 +102,40 @@ app.use("/api", async (_req, _res, next) => {
     next(error);
   }
 });
+
+/*
+|--------------------------------------------------------------------------
+| Media timeout
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/media", (req, res, next) => {
+  res.setTimeout(10 * 60 * 1000);
+  next();
+});
+
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+*/
+
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/experience", experienceRoutes);
+app.use("/api/education", educationRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/settings", siteSettingsRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Error handling
+|--------------------------------------------------------------------------
+*/
 
 app.use(errorMiddleware);
 
