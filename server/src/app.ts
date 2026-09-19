@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import helmet from "helmet";
 import compression from "compression";
 import {rateLimit} from "express-rate-limit";
 import { errorMiddleware } from "./middleware/error.middleware.js";
@@ -34,8 +33,6 @@ app.set("trust proxy", 1);
 | Security
 |--------------------------------------------------------------------------
 */
-
-app.use(helmet());
 
 app.use(
   cors({
