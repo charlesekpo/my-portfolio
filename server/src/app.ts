@@ -14,6 +14,7 @@ import mediaRoutes from "./routes/media.routes.js";
 import path from "node:path";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import educationRoutes from "./routes/education.routes.js";
+import { connectDatabase } from "./config/db.js";
 
 import { env } from "./config/env.js";
 
@@ -148,6 +149,15 @@ app.get("/api/health", (_req, res) => {
     success: true,
     message: "Portfolio API is running"
   });
+});
+
+app.use("/api", async (_req, _res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use(errorMiddleware);
