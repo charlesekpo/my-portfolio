@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import * as helmetModule from "helmet";
+import helmet from "helmet";
 import compression from "compression";
 import {rateLimit} from "express-rate-limit";
 import { errorMiddleware } from "./middleware/error.middleware.js";
@@ -17,8 +17,6 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 import educationRoutes from "./routes/education.routes.js";
 
 import { env } from "./config/env.js";
-
-const helmet = helmetModule.default;
 
 const app = express();
 
