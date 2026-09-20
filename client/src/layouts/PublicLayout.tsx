@@ -51,13 +51,7 @@ export default function PublicLayout() {
             to="/"
             className="public-logo"
           >
-            <img
-            src="/favicon.svg"
-            alt="TechX"
-            className="public-logo-image"
-          />
-
-          <span>TechX</span>
+            <span>TechX</span>
           </Link>
 
           <nav className="public-nav">
@@ -141,12 +135,7 @@ export default function PublicLayout() {
                 to="/"
                 className="public-footer-logo"
               >
-                <img
-                src="/favicon.svg"
-                alt="TechX"
-                className="public-logo-image"
-              />
-
+                
               <span>TechX</span>
               </Link>
 
@@ -198,12 +187,7 @@ export default function PublicLayout() {
           <div className="public-footer-bottom">
             <span>
               © {new Date().getFullYear()}{" "}
-              <img
-                src="/favicon.svg"
-                alt="TechX"
-                className="public-logo-image"
-              />
-
+              
               <span>TechX</span>
             </span>
 
