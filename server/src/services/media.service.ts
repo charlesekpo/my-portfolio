@@ -35,8 +35,10 @@ export async function createMedia(
       type = "video";
       uploadResult = await uploadVideo(file);
     } else {
-      type = "document" as MediaType;
-      uploadResult = await uploadImage(file);
+      throw new AppError(
+        "Unsupported file type",
+        400
+      );
     }
 
     console.log("Upload result:", uploadResult);

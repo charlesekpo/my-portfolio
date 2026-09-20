@@ -4,19 +4,16 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-// Check if Cloudinary is properly configured
 const isCloudinaryConfigured =
-  env.CLOUDINARY_CLOUD_NAME !== "your-cloud-name" &&
-  env.CLOUDINARY_API_KEY !== "your-api-key" &&
-  env.CLOUDINARY_API_SECRET !== "your-api-secret";
+  Boolean(env.CLOUDINARY_CLOUD_NAME) &&
+  Boolean(env.CLOUDINARY_API_KEY) &&
+  Boolean(env.CLOUDINARY_API_SECRET);
 
-if (isCloudinaryConfigured) {
-  cloudinary.config({
-    cloud_name: env.CLOUDINARY_CLOUD_NAME,
-    api_key: env.CLOUDINARY_API_KEY,
-    api_secret: env.CLOUDINARY_API_SECRET
-  });
-}
+cloudinary.config({
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET
+});
 
 export interface UploadResult {
   url: string;
