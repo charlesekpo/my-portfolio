@@ -131,7 +131,7 @@ export default function Login() {
       <div className="login-card">
         <div className="login-header">
           <p className="login-brand">
-            CHARLES.DEV
+            TechX
           </p>
 
           <h1>

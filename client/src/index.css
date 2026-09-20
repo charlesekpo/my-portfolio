@@ -2073,6 +2073,11 @@ input {
   text-decoration: none;
 }
 
+.public-logo-image {
+  width: 28px;
+  height: 28px;
+}
+
 .public-nav {
   display: flex;
   align-items: center;

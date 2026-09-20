@@ -20,10 +20,6 @@ export default function PublicLayout() {
     queryFn: getSettings
   });
 
-  const fullName =
-    settings?.fullName ??
-    "Portfolio";
-
   const socialLinks = [
     {
       label: "GitHub",
@@ -55,7 +51,13 @@ export default function PublicLayout() {
             to="/"
             className="public-logo"
           >
-            {fullName}
+            <img
+            src="/favicon.svg"
+            alt="TechX"
+            className="public-logo-image"
+          />
+
+          <span>TechX</span>
           </Link>
 
           <nav className="public-nav">
@@ -139,7 +141,13 @@ export default function PublicLayout() {
                 to="/"
                 className="public-footer-logo"
               >
-                {fullName}
+                <img
+                src="/favicon.svg"
+                alt="TechX"
+                className="public-logo-image"
+              />
+
+              <span>TechX</span>
               </Link>
 
               <p>
@@ -190,7 +198,13 @@ export default function PublicLayout() {
           <div className="public-footer-bottom">
             <span>
               © {new Date().getFullYear()}{" "}
-              {fullName}
+              <img
+                src="/favicon.svg"
+                alt="TechX"
+                className="public-logo-image"
+              />
+
+              <span>TechX</span>
             </span>
 
             <Link to="/admin/login">

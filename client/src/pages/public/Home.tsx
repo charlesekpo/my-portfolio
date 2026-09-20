@@ -61,7 +61,18 @@ export default function Home() {
     });
 
   const settings =
-    settingsQuery.data;
+  settingsQuery.data;
+
+  if (settingsQuery.isLoading || !settings) {
+    return (
+      <main className="home-page">
+        <div className="home-loading">
+          <div className="home-loading-spinner" />
+          <p>Loading portfolio...</p>
+        </div>
+      </main>
+    );
+  }
 
   const featuredProjects =
     projectsQuery.data
@@ -98,18 +109,15 @@ export default function Home() {
             </p>
 
             <h1>
-              {settings?.fullName ??
-                "Your Name"}
+              {settings.fullName}
             </h1>
 
             <h2>
-              {settings?.professionalTitle ??
-                "Full-Stack Developer"}
+              {settings.professionalTitle}
             </h2>
 
             <p className="home-hero-bio">
-              {settings?.shortBio ??
-                "I build modern, scalable and user-focused web applications."}
+              {settings.shortBio}
             </p>
 
             <div className="home-hero-actions">

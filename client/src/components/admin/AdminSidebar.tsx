@@ -45,7 +45,7 @@ export default function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
       <div className="admin-logo">
-        CHARLES.DEV
+        TechX
       </div>
 
       <nav>
